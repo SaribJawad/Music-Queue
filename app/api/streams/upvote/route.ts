@@ -1,5 +1,4 @@
 import { prismaClient } from "@/app/lib/db";
-import { Session } from "inspector/promises";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -32,13 +31,19 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = UpVoteSchema.parse(await req.json());
+    console.log(data);
     await prismaClient.upVote.create({
       data: {
         userId: user.id,
         streamId: data.streamId,
       },
     });
+
+    return NextResponse.json({
+      message: "Upvoted stream successfully",
+    });
   } catch (error) {
+    console.log(error);
     return NextResponse.json(
       {
         message: "Error while upvoting",

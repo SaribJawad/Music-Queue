@@ -3,9 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 //@ts-ignore
 import youtubesearchapi from "youtube-search-api";
-
-const YT_REGEX =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/;
+import { YT_REGEX } from "@/app/lib/utils";
 
 const createStreamSchema = z.object({
   creatorId: z.string(),
@@ -16,6 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     const data = createStreamSchema.parse(await req.json());
     const isYt = data.url.match(YT_REGEX);
+
     // add rate limiting so the single user cannot fload the screen
 
     if (!isYt) {
@@ -57,8 +56,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
-      message: "Added stream",
-      id: stream.id,
+      ...stream,
+      hasUpvoted: false,
+      upvotes: 0,
     });
   } catch (error) {
     return NextResponse.json(

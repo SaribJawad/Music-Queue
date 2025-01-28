@@ -39,6 +39,10 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    return NextResponse.json({
+      message: "Downvoted stream successfully",
+    });
   } catch (error) {
     return NextResponse.json(
       {
