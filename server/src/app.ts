@@ -23,11 +23,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
-// routes
+// ### routes
 
 import authRouter from "./routes/auth.route";
 
-// routes declaration
+// ### routes declaration
 
 app.use("/api/v1/auth", authRouter);
 
