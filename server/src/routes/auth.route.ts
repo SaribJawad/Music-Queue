@@ -1,5 +1,9 @@
 import { Router } from "express";
 import passport from "passport";
+import {
+  handelGoogleLogout,
+  handleGoogleLogin,
+} from "src/controllers/auth.controller";
 
 const router = Router();
 
@@ -11,12 +15,8 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
-  async (req, res) => {
-    // TODO :
-    // create jwt
-    // send cookie to FE
-    console.log("req.user", req.user);
-  }
+  handleGoogleLogin
 );
+router.get("/google/logout", handelGoogleLogout);
 
 export default router;

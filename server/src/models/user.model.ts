@@ -14,15 +14,19 @@ export interface IUser extends Document {
   email: string;
   avatar?: string;
   streams: Stream[];
+  refreshToken?: string;
+  generateAccessToken: () => string;
+  generateRefreshToken: () => string;
 }
 
 const userSchema: Schema<IUser> = new Schema(
   {
     googleId: { type: String },
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     avatar: { type: String },
     streams: [{ type: Schema.Types.ObjectId, ref: "Stream" }],
+    refreshToken: { type: String, required: true },
   },
   { timestamps: true }
 );

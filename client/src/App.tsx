@@ -14,6 +14,9 @@ function App() {
           <a href="http://localhost:3000/api/v1/auth/google">
             Login with Google
           </a>
+          <a href="http://localhost:3000/api/v1/auth/google/logout">
+            Logout Google
+          </a>
         </div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
