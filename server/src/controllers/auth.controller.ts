@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import { Types } from "mongoose";
 import { Profile } from "passport-google-oauth20";
 import { User } from "src/models/user.model";
 import { ApiError } from "src/utils/ApiError";
@@ -52,7 +52,6 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
-  // return res.redirect(`${process.env.FRONTEND_URL}/`);
   return res
     .status(200)
     .json(new ApiResponse(200, user, "Logged in successfully"));
@@ -61,8 +60,6 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
 const handelGoogleLogout = asyncHandler(async (req, res) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
-
-  console.log("clicked");
 
   return res
     .status(200)

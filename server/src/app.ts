@@ -26,9 +26,13 @@ app.use(passport.initialize());
 // ### routes
 
 import authRouter from "./routes/auth.route";
+import streamRouter from "./routes/stream.route";
+import songRouter from "./routes/song.route";
 
 // ### routes declaration
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/stream", streamRouter);
+app.use("/api/v1/song", songRouter);
 
 export { app };

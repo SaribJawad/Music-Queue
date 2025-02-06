@@ -4,6 +4,7 @@ import {
   handelGoogleLogout,
   handleGoogleLogin,
 } from "src/controllers/auth.controller";
+import { verifyJWT } from "src/middlewares/auth.middleware";
 
 const router = Router();
 
@@ -17,6 +18,6 @@ router.get(
   passport.authenticate("google", { session: false }),
   handleGoogleLogin
 );
-router.get("/google/logout", handelGoogleLogout);
+router.get("/google/logout", verifyJWT, handelGoogleLogout);
 
 export default router;

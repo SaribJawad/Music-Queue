@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { Stream } from "./stream.model";
+import { IStream } from "./stream.model";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
@@ -9,11 +9,12 @@ import {
 } from "src/config/config";
 
 export interface IUser extends Document {
+  _id: string;
   googleId: string;
   name: string;
   email: string;
   avatar?: string;
-  streams: Stream[];
+  streams: IStream[];
   refreshToken?: string;
   generateAccessToken: () => string;
   generateRefreshToken: () => string;
