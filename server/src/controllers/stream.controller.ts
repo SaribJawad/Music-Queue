@@ -33,6 +33,46 @@ const createStream = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, stream, "Stream created successfully"));
 });
 
+const getStream = asyncHandler(async (req, res) => {
+  const { streamId } = req.params;
+
+  if (!mongoose.isValidObjectId(streamId)) {
+    throw new ApiError(400, "Invalid stream Id");
+  }
+
+  const stream = await Stream.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(streamId),
+      },
+    },
+    {
+      $lookup: {
+        from: "songs",
+        localField: "songQueue",
+        foreignField: "_id",
+        as: "songQueue",
+      },
+    },
+    {
+      $project: {
+        songQueue: 1,
+        owner: 1,
+        streamType: 1,
+        currentSong: 1,
+      },
+    },
+  ]);
+
+  if (!stream) {
+    throw new ApiError(404, "Stream not found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, stream[0], "Stream fetch successfully"));
+});
+
 const endStream = asyncHandler(async (req, res) => {
   const { streamId } = req.params;
 
@@ -57,6 +97,59 @@ const endStream = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Stream ended successfully"));
 });
 
+const getSongQueue = asyncHandler(async (req, res) => {
+  const { streamId } = req.params;
+
+  if (!mongoose.isValidObjectId(streamId)) {
+    throw new ApiError(400, "Invalid stream ID");
+  }
+
+  const stream = await Stream.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(streamId),
+      },
+    },
+    {
+      $lookup: {
+        from: "songs",
+        localField: "songQueue",
+        foreignField: "_id",
+        as: "songQueue",
+      },
+    },
+    {
+      $addFields: {
+        songQueue: {
+          $sortArray: {
+            input: "$songQueue",
+            sortBy: { noOfVote: -1 },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        songQueue: 1,
+      },
+    },
+  ]);
+
+  if (!stream.length) {
+    throw new ApiError(404, "Stream not found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        stream[0].songQueue,
+        "Song queue fetched successfully"
+      )
+    );
+});
+
 const clearSongQueue = asyncHandler(async (req, res) => {
   const { streamId } = req.params;
 
@@ -73,8 +166,8 @@ const clearSongQueue = asyncHandler(async (req, res) => {
   await Song.deleteMany({ _id: { $in: stream.songQueue } });
 
   return res
-    .status(201)
-    .json(new ApiResponse(201, stream, "Cleared song queue successfully"));
+    .status(200)
+    .json(new ApiResponse(200, stream, "Cleared song queue successfully"));
 });
 
 const playNextSong = asyncHandler(async (req, res) => {
@@ -166,8 +259,8 @@ const removeSongFromQueue = asyncHandler(async (req, res) => {
   }
 
   return res
-    .status(201)
-    .json(new ApiResponse(201, stream, "Song removed from queue"));
+    .status(200)
+    .json(new ApiResponse(200, stream, "Song removed from queue"));
 });
 
 export {
@@ -176,4 +269,6 @@ export {
   clearSongQueue,
   playNextSong,
   removeSongFromQueue,
+  getStream,
+  getSongQueue,
 };
