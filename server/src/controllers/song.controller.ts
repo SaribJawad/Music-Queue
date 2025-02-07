@@ -12,7 +12,7 @@ const addSongSchema = z.object({
   title: z.string().min(1, "Title is required"),
   duration: z.number().min(1, "Duration must be greater than 0"),
   coverImageUrl: z.string().url("Invalid cover image URL"),
-  source: z.enum(["SoundCloud", "YouTube", "Spotify"]),
+  source: z.enum(["soundcloud", "youtube"]),
   addedBy: z.string().min(1, "Added by is required"),
   stream: z.string().min(1, "Stream ID is required"),
 });

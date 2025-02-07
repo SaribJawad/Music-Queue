@@ -18,7 +18,7 @@ router
   .get(verifyJWT, getStream)
   .delete(verifyJWT, endStream)
   .patch(verifyJWT, clearSongQueue);
-router.get("/song-queue", verifyJWT, getSongQueue);
+router.get("/song-queue/:streamId", verifyJWT, getSongQueue);
 router.post("/play-next/:streamId", verifyJWT, playNextSong);
 router.post(
   "/remove-song-from-queue/:streamId/:songId",
