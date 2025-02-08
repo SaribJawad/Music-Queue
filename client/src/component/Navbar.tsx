@@ -6,7 +6,7 @@ function Navbar() {
       <h1 className="text-xl font-semibold text-text_light dark:text-text_dark">
         Music Queue
       </h1>
-      <ul className="flex items-center gap-10 justify-center">
+      <ul className=" items-center gap-10 justify-center sm:flex hidden">
         <li className="cursor-pointer text-text_light dark:text-white dark:hover:text-purple-300">
           Features
         </li>

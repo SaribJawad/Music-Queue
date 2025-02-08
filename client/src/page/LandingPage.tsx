@@ -1,5 +1,9 @@
+import Footer from "../component/Footer";
 import Navbar from "../component/Navbar";
+import CTA from "../component/ui/CTA";
+import FeatureSection from "../component/ui/FeatureSection";
 import HeroSection from "../component/ui/HeroSection";
+import HowItWorks from "../component/ui/HowItWorks";
 
 function LandingPage() {
   return (
@@ -7,7 +11,11 @@ function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
+        <FeatureSection />
+        <HowItWorks />
+        <CTA />
       </main>
+      <Footer />
     </div>
   );
 }

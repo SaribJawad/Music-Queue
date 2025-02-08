@@ -1,10 +1,12 @@
+import Button from "../Button";
+
 function HeroSection() {
   return (
-    <section className="min-h-[calc(100vh-4rem)] w-full sm:w-[80%] py-10 px-3 sm:mx-auto flex flex-col items-center justify-center text-center gap-10 ">
+    <section className="min-h-[calc(100vh-3.9rem)] w-full sm:w-[80%] py-10 px-3 sm:mx-auto flex flex-col items-center justify-center text-center gap-10 ">
       <div className="flex flex-col gap-3">
-        <h1 className="text-3xl sm:text-4xl md:text-6xl font-semibold flex  flex-col gap-2">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold flex  flex-col gap-2">
           Stream, Vote, Play –{" "}
-          <span className="keyboard block px-3  rounded-md text-purple-700">
+          <span className="keyboard block px-3  rounded-md text-text_dark_secondary">
             <span className="key">Y</span>
             <span className="key">O</span>
             <span className="key">U</span>
@@ -22,9 +24,7 @@ function HeroSection() {
         </p>
       </div>
       <div className="mt-6 flex gap-4">
-        <button className="px-6 py-3 dark:text-white text-text_light border border-purple-800 hover:bg-text_light hover:text-text_dark  dark:hover:bg-purple-800 duration-300 transition-all rounded-md text-sm ">
-          Get Started
-        </button>
+        <Button>Get Started</Button>
       </div>
     </section>
   );
