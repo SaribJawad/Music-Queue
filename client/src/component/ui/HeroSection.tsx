@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Button from "../Button";
 
 function HeroSection() {
@@ -24,7 +25,9 @@ function HeroSection() {
         </p>
       </div>
       <div className="mt-6 flex gap-4">
-        <Button>Get Started</Button>
+        <Link to="/auth">
+          <Button>Sign in now</Button>
+        </Link>
       </div>
     </section>
   );

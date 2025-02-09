@@ -2,12 +2,14 @@ class ApiError extends Error {
   statusCode: number;
   success: false;
   errors: string[];
+  stack?: string;
   data: null;
 
   constructor(
     statusCode: number,
     message: string = "Something went wrong",
-    errors = []
+    errors = [],
+    stack: string = ""
   ) {
     super(message);
     this.errors = errors;
@@ -15,7 +17,11 @@ class ApiError extends Error {
     this.statusCode = statusCode;
     this.success = false;
 
-    Object.setPrototypeOf(this, ApiError.prototype);
+    if (stack) {
+      this.stack = process.env.NODE_ENV === "development" ? stack : undefined;
+    } else {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 }
 

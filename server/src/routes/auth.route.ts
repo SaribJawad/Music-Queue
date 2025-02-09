@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import {
+  getUserInfo,
   handelGoogleLogout,
   handleGoogleLogin,
 } from "src/controllers/auth.controller";
@@ -19,5 +20,6 @@ router.get(
   handleGoogleLogin
 );
 router.get("/google/logout", verifyJWT, handelGoogleLogout);
+router.get("/get-user", verifyJWT, getUserInfo);
 
 export default router;

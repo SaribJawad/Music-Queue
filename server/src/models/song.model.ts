@@ -50,10 +50,7 @@ const songSchema: Schema<ISong> = new Schema(
       type: Number,
       default: 0,
     },
-    addedBy: {
-      type: String,
-      required: true,
-    },
+
     stream: {
       type: mongoose.Types.ObjectId,
       ref: "Stream",
