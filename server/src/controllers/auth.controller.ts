@@ -6,6 +6,7 @@ import { ApiResponse } from "src/utils/ApiResponse";
 import { asyncHandler } from "src/utils/asyncHandler";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET } from "src/config/config";
+import { Stream } from "src/models/stream.model";
 
 const generateAccessAndRefreshToken = async (
   userId: Types.ObjectId
@@ -58,6 +59,18 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {
+  const { _id: userId } = req.user as IUser;
+
+  if (!mongoose.isValidObjectId(userId)) {
+    throw new ApiError(400, "Invalid user ID");
+  }
+
+  try {
+    await Stream.deleteMany({ owner: userId });
+  } catch (error) {
+    throw new ApiError(500, "Something went wrong while deleting the stream");
+  }
+
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
 

@@ -5,7 +5,7 @@ function Button({
 }: {
   children: React.ReactNode;
   size?: string;
-  onClick?: () => Promise<void>;
+  onClick?: (...args: any[]) => any;
 }) {
   return (
     <button

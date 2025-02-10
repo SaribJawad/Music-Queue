@@ -6,6 +6,7 @@ import { useAuthContext } from "./contexts/authContext";
 import { useEffect, useState } from "react";
 import { api } from "./config/axios";
 import LoadingBar from "./component/ui/LoadingBar";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const { isAuthenticated, setIsAuthenticated, setUserInfo } = useAuthContext();
@@ -17,11 +18,13 @@ function App() {
         setIsLoading(true);
         const response = await api.get("/auth/get-user");
         if (response.status === 200) {
-          setIsAuthenticated(true);
+          localStorage.setItem("isAuthenticated", "true");
+          setIsAuthenticated(localStorage.getItem("isAuthenticated"));
           setUserInfo(response.data.data);
           setIsLoading(false);
         } else {
-          setIsAuthenticated(false);
+          localStorage.setItem("isAuthenticated", "false");
+          setIsAuthenticated(localStorage.getItem("isAuthenticated"));
           setUserInfo(null);
           setIsLoading(false);
         }
@@ -42,21 +45,32 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route
-        path="/auth"
-        element={
-          isAuthenticated ? <Navigate to="/stream" replace /> : <LoginPage />
-        }
-      />
-      <Route
-        path="/stream"
-        element={
-          isAuthenticated ? <StreamPage /> : <Navigate to="/auth" replace />
-        }
-      />
-    </Routes>
+    <div>
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/auth"
+          element={
+            isAuthenticated === "true" ? (
+              <Navigate to="/stream" replace />
+            ) : (
+              <LoginPage />
+            )
+          }
+        />
+        <Route
+          path="/stream/:userId?"
+          element={
+            isAuthenticated === "true" ? (
+              <StreamPage />
+            ) : (
+              <Navigate to="/auth" replace />
+            )
+          }
+        />
+      </Routes>
+    </div>
   );
 }
 
