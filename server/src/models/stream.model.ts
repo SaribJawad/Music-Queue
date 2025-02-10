@@ -8,7 +8,7 @@ export interface IStream extends Document {
   streamType: StreamTypes;
   owner: IUser;
   songQueue: ISong[];
-  currentSong: ISong;
+  currentSong: ISong | null;
 }
 
 const streamSchema: Schema<IStream> = new Schema(
@@ -32,6 +32,7 @@ const streamSchema: Schema<IStream> = new Schema(
     currentSong: {
       type: mongoose.Types.ObjectId,
       ref: "Song",
+      default: null,
     },
   },
   { timestamps: true }

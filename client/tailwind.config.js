@@ -11,8 +11,9 @@ export default {
       colors: {
         background_dark: "#0a0d14",
         background_dark_secondary: "#101520",
-        background_light: "#d8b4fe",
-        background_light_secondary: "#be92ee",
+        background_light: "#FFF2F2",
+        // background_light_secondary: "#be92ee",
+        background_light_secondary: "#E4E0E1",
         text_dark: "#d8b4fe",
         text_dark_secondary: "#7e22ce",
         text_light: "#0a0d14",

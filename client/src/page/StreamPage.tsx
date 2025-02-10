@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import EmptyStreamSection from "../component/EmptyStreamSection";
 import LiveStreamSection from "../component/LiveStreamSection";
 import { useParams } from "react-router-dom";
+import { StreamContextProvider } from "../contexts/streamContext";
 
 function StreamPage() {
   const { userInfo, logout } = useAuthContext();
@@ -30,40 +31,42 @@ function StreamPage() {
   };
 
   return (
-    <div
-      className={` min-h-dvh w-full dark:bg-background_dark bg-background_light px-5 py-3 flex flex-col gap-10`}
-    >
-      {isModalOpen && (
-        <Modal
-          content="Are you sure you want to logout? it will remove the stream too."
-          buttonContent="Yes"
-          handleModal={setIsModalOpen}
-          buttonOnClick={logout}
-        />
-      )}
-      <nav className="py-2 sm:px-6 px-1 flex items-center justify-between lg:w-[80%] w-full lg:mx-auto  ">
-        <div className="flex items-center gap-4 text-text_light dark:text-text_dark">
-          <img
-            width={45}
-            className="rounded-full"
-            src={userInfo?.avatar}
-            alt=""
+    <StreamContextProvider>
+      <div
+        className={` min-h-dvh w-full dark:bg-background_dark bg-background_light px-5 py-3 flex flex-col gap-10`}
+      >
+        {isModalOpen && (
+          <Modal
+            content="Are you sure you want to logout? it will remove the stream too."
+            buttonContent="Yes"
+            handleModal={setIsModalOpen}
+            buttonOnClick={logout}
           />
-          <h1 className="font-semibold">{userInfo?.name}</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button size="sm">
-            <FiShare2 /> Share
-          </Button>
-          <Button size="sm" onClick={handleModal}>
-            Logout
-          </Button>
-          <ThemeToggle />
-        </div>
-      </nav>
+        )}
+        <nav className="py-2 sm:px-6 px-1 flex items-center justify-between lg:w-[80%] w-full lg:mx-auto  ">
+          <div className="flex items-center gap-4 text-text_light dark:text-text_dark">
+            <img
+              width={45}
+              className="rounded-full"
+              src={userInfo?.avatar}
+              alt=""
+            />
+            <h1 className="font-semibold">{userInfo?.name}</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button size="sm">
+              <FiShare2 /> Share
+            </Button>
+            <Button size="sm" onClick={handleModal}>
+              Logout
+            </Button>
+            <ThemeToggle />
+          </div>
+        </nav>
 
-      {userId ? <LiveStreamSection /> : <EmptyStreamSection />}
-    </div>
+        {userId ? <LiveStreamSection /> : <EmptyStreamSection />}
+      </div>
+    </StreamContextProvider>
   );
 }
 

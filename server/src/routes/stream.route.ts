@@ -2,6 +2,7 @@ import {
   clearSongQueue,
   createStream,
   endStream,
+  getAllStreams,
   getSongQueue,
   getStream,
   playNextSong,
@@ -12,6 +13,7 @@ import { verifyJWT } from "src/middlewares/auth.middleware";
 
 const router = Router();
 
+router.get("/get-all-streams", verifyJWT, getAllStreams);
 router.post("/create-stream", verifyJWT, createStream);
 router
   .route("/:streamId")

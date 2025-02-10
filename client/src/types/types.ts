@@ -12,6 +12,7 @@ export interface IUser {
 type StreamTypes = "youtube" | "soundcloud";
 
 export interface IStream {
+  _id: string;
   streamType: StreamTypes;
   owner: IUser;
   songQueue: ISong[];

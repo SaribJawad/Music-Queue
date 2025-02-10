@@ -19,6 +19,7 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
     localStorage.getItem("isAuthenticated")
   );
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
+
   const navigate = useNavigate();
 
   async function logout() {
