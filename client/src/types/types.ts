@@ -5,6 +5,7 @@ export interface IUser {
   email: string;
   avatar: string;
   streams: IStream[];
+  isAlive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,12 +21,14 @@ export interface IStream {
 }
 
 export interface ISong {
+  _id: string;
   externalId: string;
   title: string;
   duration: number;
   coverImageUrl: string;
   source: StreamTypes;
   vote: string[];
+  artist: string;
   noOFVote: number;
   stream: IStream;
 }

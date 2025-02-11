@@ -28,6 +28,8 @@ const createStream = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while creating stream");
   }
 
+  await User.findByIdAndUpdate(userId, { isAlive: true });
+
   await User.findByIdAndUpdate(userId, {
     $push: { streams: stream },
   });
@@ -139,6 +141,7 @@ const getAllStreams = asyncHandler(async (req, res) => {
 
 const endStream = asyncHandler(async (req, res) => {
   const { streamId } = req.params;
+  const { _id: userId } = req.user as IUser;
 
   if (!mongoose.isValidObjectId(streamId)) {
     throw new ApiError(400, "Invalid Stream ID");
@@ -155,6 +158,8 @@ const endStream = asyncHandler(async (req, res) => {
   }
 
   await Stream.findByIdAndDelete(streamId);
+
+  await User.findByIdAndUpdate(userId, { isAlive: true });
 
   return res
     .status(200)

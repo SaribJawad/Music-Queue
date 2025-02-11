@@ -13,6 +13,7 @@ export interface ISong extends Document {
   noOfVote: number;
   addedBy: string;
   stream: IStream;
+  artist: string;
 }
 
 const songSchema: Schema<ISong> = new Schema(
@@ -33,6 +34,10 @@ const songSchema: Schema<ISong> = new Schema(
     coverImageUrl: {
       type: String,
       requried: true,
+    },
+    artist: {
+      type: String,
+      required: true,
     },
     source: {
       type: String,

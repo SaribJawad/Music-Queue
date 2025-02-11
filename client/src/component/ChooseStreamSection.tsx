@@ -18,7 +18,7 @@ function ChooseStreamSection() {
   ];
 
   return (
-    <div className="dark:bg-background_dark_secondary bg-background_light_secondary rounded-md  col-span-1 lg:col-span-2 p-4 flex flex-col gap-10">
+    <div className="dark:bg-background_dark_secondary bg-background_light_secondary rounded-md sm:w-[80%] w-[95%] mx-auto  col-span-1 lg:col-span-2 p-4 flex flex-col gap-20">
       <h1 className="dark:text-white text-text_light text-xl sm:text-2xl font-semibold text-center max-h-[400px]">
         Choose a platform to start the stream
       </h1>

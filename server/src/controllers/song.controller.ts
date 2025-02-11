@@ -17,6 +17,9 @@ const addSongSchema = z.object({
   stream: z.string().min(1, "Stream ID is required"),
 });
 
+const urlYoutubeRegex =
+  /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/;
+
 const addSong = asyncHandler(async (req, res) => {
   try {
     const validatedData = addSongSchema.parse(req.body);

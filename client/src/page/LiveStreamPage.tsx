@@ -1,18 +1,26 @@
-import { FiShare2 } from "react-icons/fi";
-import Button from "../component/Button";
-import ThemeToggle from "../component/ui/ThemeToggle";
-import { useAuthContext } from "../contexts/authContext";
-import Modal from "../component/Modal";
+import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import EmptyStreamSection from "../component/EmptyStreamSection";
-import LiveStreamSection from "../component/LiveStreamSection";
+import { useAuthContext } from "../contexts/authContext";
 import { useParams } from "react-router-dom";
-import { StreamContextProvider } from "../contexts/streamContext";
+import Button from "../component/Button";
+import { FiShare2 } from "react-icons/fi";
+import ThemeToggle from "../component/ui/ThemeToggle";
+import LiveStreamSection from "../component/LiveStreamSection";
+import Modal from "../component/Modal";
+import { SongContextProvder } from "../contexts/songContext";
 
-function StreamPage() {
+function LiveStreamPage() {
+  const { streamId } = useParams();
   const { userInfo, logout } = useAuthContext();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const { userId } = useParams();
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast.success("URL copied to clipboard");
+    } catch (error) {
+      toast.error("Failed to copy URL");
+    }
+  };
 
   useEffect(() => {
     if (isModalOpen) {
@@ -31,10 +39,8 @@ function StreamPage() {
   };
 
   return (
-    <StreamContextProvider>
-      <div
-        className={` min-h-dvh w-full dark:bg-background_dark bg-background_light px-5 py-3 flex flex-col gap-10`}
-      >
+    <SongContextProvder>
+      <div className="min-h-dvh w-full dark:bg-background_dark bg-background_light px-5 py-3 flex flex-col gap-10">
         {isModalOpen && (
           <Modal
             content="Are you sure you want to logout? it will remove the stream too."
@@ -54,20 +60,21 @@ function StreamPage() {
             <h1 className="font-semibold">{userInfo?.name}</h1>
           </div>
           <div className="flex items-center gap-4">
-            <Button size="sm">
-              <FiShare2 /> Share
-            </Button>
+            {streamId && (
+              <Button onClick={handleShare} size="sm">
+                <FiShare2 /> Share
+              </Button>
+            )}
             <Button size="sm" onClick={handleModal}>
               Logout
             </Button>
             <ThemeToggle />
           </div>
         </nav>
-
-        {userId ? <LiveStreamSection /> : <EmptyStreamSection />}
+        <LiveStreamSection />
       </div>
-    </StreamContextProvider>
+    </SongContextProvder>
   );
 }
 
-export default StreamPage;
+export default LiveStreamPage;

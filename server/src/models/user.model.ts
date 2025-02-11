@@ -7,6 +7,7 @@ import {
   REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_EXPIRY,
 } from "src/config/config";
+import { boolean } from "zod";
 
 export interface IUser extends Document {
   _id: string;
@@ -15,6 +16,7 @@ export interface IUser extends Document {
   email: string;
   avatar?: string;
   streams: IStream[];
+  isAlive: boolean;
   refreshToken?: string;
   generateAccessToken: () => string;
   generateRefreshToken: () => string;
@@ -27,7 +29,8 @@ const userSchema: Schema<IUser> = new Schema(
     email: { type: String, required: true, unique: true },
     avatar: { type: String },
     streams: [{ type: Schema.Types.ObjectId, ref: "Stream" }],
-    refreshToken: { type: String, required: true },
+    refreshToken: { type: String },
+    isAlive: { type: Boolean, default: false, required: true },
   },
   { timestamps: true }
 );

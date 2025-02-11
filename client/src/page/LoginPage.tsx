@@ -1,9 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import ThemeToggle from "../component/ui/ThemeToggle";
 import { ArrowLeft } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../contexts/authContext";
 
 function LoginPage() {
+  const location = useLocation();
+  const { isAuthenticated } = useAuthContext();
+  const from = location.state?.from;
+
+  const handleLogin = () => {
+    try {
+      window.location.href = "http://localhost:3000/api/v1/auth/google";
+
+      if (from && isAuthenticated) {
+        localStorage.setItem("redirectAfterLogin", from);
+      }
+    } catch (error) {
+      toast.error("Something went wrong while logging in");
+    }
+  };
+
   return (
     <div className="h-dvh w-full dark:bg-background_dark bg-background_light px-5">
       <nav className="py-4 sm:px-6 px-1 flex items-center justify-between lg:w-[80%] w-full lg:mx-auto  ">
@@ -22,12 +40,12 @@ function LoginPage() {
             To get Started
           </p>
         </div>
-        <Link
-          to="http://localhost:3000/api/v1/auth/google"
+        <button
+          onClick={handleLogin}
           className="bg-background_dark dark:bg-white w-fit self-center px-4 py-2 rounded-md text-text_dark dark:text-text_light flex items-center gap-3"
         >
           Login with <FcGoogle size={20} />
-        </Link>
+        </button>
       </div>
     </div>
   );

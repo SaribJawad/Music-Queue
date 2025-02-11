@@ -25,8 +25,9 @@ export const GlobalProvider = ({ children }: { children: ReactNode }) => {
   async function logout() {
     const response = await api.get("/auth/google/logout");
 
-    if (response.data) {
-      localStorage.removeItem("isAuthenticated");
+    if (response.status === 200) {
+      localStorage.setItem("isAuthenticated", "false");
+      setIsAuthenticated(localStorage.getItem("isAuthenticated"));
       toast.success("Logged out!", {
         position: "top-right",
         autoClose: 5000,

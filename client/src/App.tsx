@@ -1,12 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import LandingPage from "./page/LandingPage";
 import LoginPage from "./page/LoginPage";
-import StreamPage from "./page/StreamPage";
 import { useAuthContext } from "./contexts/authContext";
 import { useEffect, useState } from "react";
 import { api } from "./config/axios";
 import LoadingBar from "./component/ui/LoadingBar";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./component/ProtectedRoute";
+import StartStreamPage from "./page/StartStreamPage";
+import LiveStreamPage from "./page/LiveStreamPage";
 
 function App() {
   const { isAuthenticated, setIsAuthenticated, setUserInfo } = useAuthContext();
@@ -17,19 +19,24 @@ function App() {
       try {
         setIsLoading(true);
         const response = await api.get("/auth/get-user");
+
         if (response.status === 200) {
-          localStorage.setItem("isAuthenticated", "true");
-          setIsAuthenticated(localStorage.getItem("isAuthenticated"));
+          setIsAuthenticated("true");
           setUserInfo(response.data.data);
-          setIsLoading(false);
-        } else {
-          localStorage.setItem("isAuthenticated", "false");
-          setIsAuthenticated(localStorage.getItem("isAuthenticated"));
-          setUserInfo(null);
-          setIsLoading(false);
+
+          const redirectUrl = localStorage.getItem("redirectAfterLogin");
+          if (redirectUrl) {
+            window.location.href = redirectUrl;
+            localStorage.removeItem("redirectAfterLogin");
+            return;
+          }
         }
+      } catch {
+        setIsAuthenticated("false");
+        setUserInfo(null);
       } finally {
         setIsLoading(false);
+        localStorage.setItem("isAuthenticated", isAuthenticated!);
       }
     };
 
@@ -60,13 +67,19 @@ function App() {
           }
         />
         <Route
-          path="/stream/:userId?"
+          path="/stream"
           element={
-            isAuthenticated === "true" ? (
-              <StreamPage />
-            ) : (
-              <Navigate to="/auth" replace />
-            )
+            <ProtectedRoute>
+              <StartStreamPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/stream/:streamId"
+          element={
+            <ProtectedRoute>
+              <LiveStreamPage />
+            </ProtectedRoute>
           }
         />
       </Routes>

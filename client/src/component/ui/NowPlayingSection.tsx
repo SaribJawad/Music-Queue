@@ -1,18 +1,28 @@
+import { useState } from "react";
 import { ISong } from "../../types/types";
 import Button from "../Button";
+import { useSongContext } from "../../contexts/songContext";
 
 interface NowPlayingSectionProps {
   currentSong: ISong | null;
+  isOwner: boolean;
 }
 
-function NowPlayingSection({ currentSong }: NowPlayingSectionProps) {
+function NowPlayingSection({ currentSong, isOwner }: NowPlayingSectionProps) {
+  const [input, setInput] = useState<string>("");
+  const { addSong } = useSongContext();
+
+  const handleAddSong = (input: string) => {
+    addSong(input);
+  };
+
   return (
     <div className="lg:col-span-2 bg-background_light_secondary dark:bg-background_dark_secondary p-4 rounded-md  flex flex-col gap-2">
       <div className="flex justify-between">
         <h1 className="text-lg font-semibold dark:text-white text-background_dark ">
           Now Playing
         </h1>
-        <Button size="sm">End stream</Button>
+        {isOwner && <Button size="sm">End stream</Button>}
       </div>
       <div className="aspect-video  flex flex-col items-center justify-center  gap-2">
         {currentSong ? (
@@ -33,7 +43,7 @@ function NowPlayingSection({ currentSong }: NowPlayingSectionProps) {
                   {""}
                 </span>
               </h3>
-              <Button size="sm">Play Next</Button>
+              {isOwner && <Button size="sm">Play Next</Button>}
             </div>
           </>
         ) : (
@@ -44,11 +54,15 @@ function NowPlayingSection({ currentSong }: NowPlayingSectionProps) {
       </div>
       <div className="flex  gap-2 ">
         <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           type="text"
           placeholder="Paste YouTube URL here"
           className="dark:bg-background_dark bg-background_light px-2 rounded-md outline-none flex-grow placeholder:text-sm placeholder:text-text_light dark:placeholder:text-white  dark:text-white text-text_light text-sm"
         />
-        <Button size="sm">Add Song</Button>
+        <Button onClick={() => handleAddSong(input)} size="sm">
+          Add Song
+        </Button>
       </div>
     </div>
   );

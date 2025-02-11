@@ -1,14 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { IStream } from "../types/types";
 import { api } from "../config/axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 interface StreamContextType {
   stream: IStream | null;
   setStream: React.Dispatch<React.SetStateAction<IStream | null>>;
-  allStreams: IStream[];
-  setAllStreams: React.Dispatch<React.SetStateAction<IStream[]>>;
+
   isAllStreamsLoading: boolean;
   setIsAllStreamsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   getStream: (streamId: string) => Promise<void>;
@@ -17,6 +15,8 @@ interface StreamContextType {
   createStream: (streamType: string) => Promise<void>;
   isGetStreamLoading: boolean;
   setIsGetStreamLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const StreamContext = createContext<StreamContextType | null>(null);
@@ -27,11 +27,11 @@ export const StreamContextProvider = ({
   children: React.ReactNode;
 }) => {
   const [stream, setStream] = useState<IStream | null>(null);
-  const [allStreams, setAllStreams] = useState<IStream[]>([]);
   const [isAllStreamsLoading, setIsAllStreamsLoading] = useState<boolean>(true);
   const [isGetStreamLoading, setIsGetStreamLoading] = useState<boolean>(true);
   const [isCreateStreamLoading, setIsCreateStreamLoading] =
     useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -41,15 +41,7 @@ export const StreamContextProvider = ({
       const response = await api.post("/stream/create-stream", { streamType });
       navigate(`/stream/${response.data.data._id}`);
     } catch (error) {
-      toast.error("Something went wrong while creating stream", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      setIsCreateStreamLoading(false);
+      setError("Something went wrong while creating stream");
     } finally {
       setIsCreateStreamLoading(false);
     }
@@ -61,45 +53,13 @@ export const StreamContextProvider = ({
       const response = await api.get(`/stream/${streamId}`);
       setStream(response.data.data);
     } catch (error) {
-      setIsGetStreamLoading(false);
-      toast.error("Something went wrong while getting stream", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      setError("Something went wrong while joining stream");
+
+      navigate("/stream");
     } finally {
       setIsGetStreamLoading(false);
     }
   };
-
-  useEffect(() => {
-    const getStreams = async () => {
-      setIsAllStreamsLoading(true);
-      const response = await api.get("/stream/get-all-streams");
-
-      if (response.status === 200) {
-        setIsAllStreamsLoading(false);
-        setAllStreams(response.data.data);
-      } else {
-        setIsAllStreamsLoading(false);
-        setAllStreams([]);
-
-        toast.error("Something went wrong while getting streams!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
-    };
-
-    getStreams();
-  }, []);
 
   return (
     <StreamContext.Provider
@@ -109,8 +69,8 @@ export const StreamContextProvider = ({
         getStream,
         stream,
         setStream,
-        setAllStreams,
-        allStreams,
+        error,
+        setError,
         isAllStreamsLoading,
         setIsAllStreamsLoading,
         isCreateStreamLoading,
