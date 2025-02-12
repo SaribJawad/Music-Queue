@@ -1,12 +1,28 @@
 import { IoMusicalNotes } from "react-icons/io5";
 import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
-import { ISong } from "../../types/types";
+import { useSongContext } from "../../contexts/songContext";
+import { useParams } from "react-router-dom";
+import { useAuthContext } from "../../contexts/authContext";
+import { useEffect } from "react";
 
-interface VoteSectionProps {
-  songQueue: ISong[];
-}
+function VoteSection() {
+  const { upVoteSong, downVoteSong, songQueue, getSongQueue } =
+    useSongContext();
+  const { userInfo } = useAuthContext();
+  const { streamId } = useParams();
 
-function VoteSection({ songQueue }: VoteSectionProps) {
+  const handleUpVote = (songId: string, streamId: string) => {
+    upVoteSong(songId, streamId);
+  };
+
+  const handleDownVote = (songId: string, streamId: string) => {
+    downVoteSong(songId, streamId);
+  };
+
+  useEffect(() => {
+    getSongQueue(streamId!);
+  }, []);
+
   return (
     <div className=" bg-background_light_secondary dark:bg-background_dark_secondary flex flex-col gap-5 p-4 rounded-md  overflow-y-auto   ">
       <h1 className="text-lg font-semibold dark:text-white text-background_dark ">
@@ -32,11 +48,23 @@ function VoteSection({ songQueue }: VoteSectionProps) {
                 </h3>
               </div>
               <div className="flex items-center gap-3">
-                <button>
+                <button
+                  className={`${
+                    song.vote.includes(userInfo?._id!) && "cursor-not-allowed"
+                  }`}
+                  disabled={song.vote.includes(userInfo?._id!)}
+                  onClick={() => handleUpVote(song._id, streamId!)}
+                >
                   <FaArrowUpLong />
                 </button>
-                <span className="text-white text-sm">{song.noOFVote}</span>
-                <button>
+                <span className="text-white text-sm">{song.noOfVote}</span>
+                <button
+                  className={`${
+                    !song.vote.includes(userInfo?._id!) && "cursor-not-allowed"
+                  }`}
+                  disabled={!song.vote.includes(userInfo?._id!)}
+                  onClick={() => handleDownVote(song._id, streamId!)}
+                >
                   <FaArrowDownLong />
                 </button>
               </div>

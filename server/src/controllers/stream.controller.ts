@@ -69,6 +69,19 @@ const getStream = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "songs",
+        localField: "currentSong",
+        foreignField: "_id",
+        as: "currentSong",
+      },
+    },
+    {
+      $addFields: {
+        currentSong: { $first: "$currentSong" },
+      },
+    },
+    {
       $addFields: {
         owner: { $first: "$owner" },
       },
@@ -241,7 +254,7 @@ const getSongQueue = asyncHandler(async (req, res) => {
 
 const playNextSong = asyncHandler(async (req, res) => {
   const { streamId } = req.params;
-
+  console.log(streamId, "streamId");
   if (!mongoose.isValidObjectId(streamId)) {
     throw new ApiError(400, "Invalid stream ID");
   }
@@ -249,7 +262,7 @@ const playNextSong = asyncHandler(async (req, res) => {
   const streamData = await Stream.aggregate([
     {
       $match: {
-        _id: streamId,
+        _id: new mongoose.Types.ObjectId(streamId),
       },
     },
     {
@@ -260,6 +273,7 @@ const playNextSong = asyncHandler(async (req, res) => {
         as: "songQueue",
       },
     },
+
     {
       $project: {
         songQueue: 1,
@@ -270,12 +284,14 @@ const playNextSong = asyncHandler(async (req, res) => {
     },
   ]);
 
-  if (!streamData) {
+  console.log(streamData, "streamId");
+
+  if (!streamData[0]) {
     throw new ApiError(400, "Stream not found");
   }
 
   const stream = streamData[0];
-
+  console.log(stream, "stream");
   if (!stream) {
     return res
       .status(200)
@@ -288,13 +304,13 @@ const playNextSong = asyncHandler(async (req, res) => {
 
   const nextSong = sortedQueue[0];
 
-  await Song.findByIdAndUpdate(streamId, {
+  await Stream.findByIdAndUpdate(streamId, {
     currentSong: nextSong,
-    $pull: { vote: stream._id },
+    $pull: { songQueue: nextSong._id },
   });
 
   return res
-    .status(201)
+    .status(200)
     .json(new ApiResponse(200, nextSong, "Next song is playing"));
 });
 

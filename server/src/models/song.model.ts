@@ -6,12 +6,10 @@ type Source = "youtube" | "soundcloud";
 export interface ISong extends Document {
   externalId: string;
   title: string;
-  duration: number;
   coverImageUrl: string;
   source: Source;
   vote: string[];
   noOfVote: number;
-  addedBy: string;
   stream: IStream;
   artist: string;
 }
@@ -25,10 +23,6 @@ const songSchema: Schema<ISong> = new Schema(
     },
     title: {
       type: String,
-      required: true,
-    },
-    duration: {
-      type: Number,
       required: true,
     },
     coverImageUrl: {

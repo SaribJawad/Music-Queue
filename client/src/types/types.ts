@@ -24,11 +24,10 @@ export interface ISong {
   _id: string;
   externalId: string;
   title: string;
-  duration: number;
   coverImageUrl: string;
   source: StreamTypes;
   vote: string[];
   artist: string;
-  noOFVote: number;
+  noOfVote: number;
   stream: IStream;
 }

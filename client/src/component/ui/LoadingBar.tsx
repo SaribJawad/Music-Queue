@@ -1,5 +1,5 @@
-function LoadingBar() {
-  return <span className="loading loading-spinner loading-lg"></span>;
+function LoadingBar({ size = "lg" }: { size?: "sm" | "lg" }) {
+  return <span className={`loading loading-spinner loading-${size}`}></span>;
 }
 
 export default LoadingBar;

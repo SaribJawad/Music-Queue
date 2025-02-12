@@ -5,32 +5,78 @@ import { ApiError } from "src/utils/ApiError";
 import { z } from "zod";
 import { Stream } from "src/models/stream.model";
 import { IUser } from "src/models/user.model";
+// @ts-ignore
+import youtubesearchapi from "youtube-search-api";
 import mongoose from "mongoose";
+import { extractYouTubeID } from "src/utils/extractYoutubeId";
+
+const objectIdRegex = /^[a-f\d]{24}$/i;
 
 const addSongSchema = z.object({
   externalId: z.string().min(1, "External ID is required"),
   title: z.string().min(1, "Title is required"),
-  duration: z.number().min(1, "Duration must be greater than 0"),
   coverImageUrl: z.string().url("Invalid cover image URL"),
+  artist: z.string(),
   source: z.enum(["soundcloud", "youtube"]),
-  addedBy: z.string().min(1, "Added by is required"),
-  stream: z.string().min(1, "Stream ID is required"),
+  stream: z.string().regex(objectIdRegex, "Invalid MongoDB ObjectID"),
 });
 
-const urlYoutubeRegex =
-  /^(?:(?:https?:)?\/\/)?(?:www\.)?(?:m\.)?(?:youtu(?:be)?\.com\/(?:v\/|embed\/|watch(?:\/|\?v=))|youtu\.be\/)((?:\w|-){11})(?:\S+)?$/;
-
 const addSong = asyncHandler(async (req, res) => {
-  try {
-    const validatedData = addSongSchema.parse(req.body);
+  const { streamId } = req.params;
+  const { url } = req.body;
 
-    const song = await Song.create({ ...validatedData });
+  try {
+    if (!mongoose.isValidObjectId(streamId)) {
+      throw new ApiError(400, "Invalid stream ID");
+    }
+
+    // TODO add check for youtube and soundcloud
+    // Handle add song for souncloud
+
+    const stream = await Stream.findById(streamId);
+
+    if (!stream) {
+      throw new ApiError(404, "Stream not found");
+    }
+
+    const extractedId = extractYouTubeID(url);
+
+    if (!extractedId) {
+      throw new ApiError(400, "Invalid youtube URL");
+    }
+
+    const {
+      id,
+      title,
+      channel,
+      thumbnail: { thumbnails },
+    } = await youtubesearchapi.GetVideoDetails(extractedId);
+
+    const validatedData = addSongSchema.parse({
+      externalId: id,
+      title,
+      source: stream.streamType,
+      artist: channel,
+      coverImageUrl: thumbnails[thumbnails.length - 1].url,
+      stream: streamId,
+    });
+
+    const song = await Song.create(validatedData);
+
+    if (!song) {
+      throw new ApiError(500, "Something went wrong while adding song");
+    }
+
+    let updateQuery;
+    if (!stream.currentSong && stream.songQueue.length === 0) {
+      updateQuery = { currentSong: song };
+    } else {
+      updateQuery = { $push: { songQueue: song } };
+    }
 
     const updatedStream = await Stream.findByIdAndUpdate(
-      validatedData.stream,
-      {
-        $push: { songQueue: song },
-      },
+      streamId,
+      updateQuery,
       { new: true }
     );
 
@@ -102,7 +148,7 @@ const downVoteSong = asyncHandler(async (req, res) => {
   }
 
   await Song.findByIdAndUpdate(songId, {
-    $addToSet: { vote: userId },
+    $pull: { vote: userId },
     $inc: {
       noOfVote: -1,
     },

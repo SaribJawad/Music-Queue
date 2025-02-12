@@ -8,7 +8,7 @@ import { verifyJWT } from "src/middlewares/auth.middleware";
 
 const router = Router();
 
-router.post("/add-song", verifyJWT, addSong);
+router.post("/add-song/:streamId", verifyJWT, addSong);
 router.post("/upvote-song/:songId", verifyJWT, upVoteSong);
 router.post("/downvote-song/:songId", verifyJWT, downVoteSong);
 
