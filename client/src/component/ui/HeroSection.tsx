@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import Button from "../Button";
+import { useAuthContext } from "../../contexts/authContext";
 
 function HeroSection() {
+  const { isAuthenticated } = useAuthContext();
+
   return (
     <section className="min-h-[calc(100vh-3.9rem)] w-full sm:w-[80%] py-10 px-3 sm:mx-auto flex flex-col items-center justify-center text-center gap-10 ">
       <div className="flex flex-col gap-3">
@@ -25,9 +28,15 @@ function HeroSection() {
         </p>
       </div>
       <div className="mt-6 flex gap-4">
-        <Link to="/auth">
-          <Button>Sign in now</Button>
-        </Link>
+        {isAuthenticated ? (
+          <Link to="/stream">
+            <Button>Go back to stream page</Button>
+          </Link>
+        ) : (
+          <Link to="/auth">
+            <Button>Sign in now</Button>
+          </Link>
+        )}
       </div>
     </section>
   );

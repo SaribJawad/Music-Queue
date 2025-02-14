@@ -19,7 +19,10 @@ function FeatureSection() {
   ];
 
   return (
-    <section className="bg-background_light_secondary dark:bg-background_dark_secondary w-full   text-center py-20 px-5 flex flex-col items-center gap-10 ">
+    <section
+      id="features"
+      className="bg-background_light_secondary dark:bg-background_dark_secondary w-full   text-center py-20 px-5 flex flex-col items-center gap-10 "
+    >
       <h1 className="dark:text-text_dark text-text_light text-4xl sm:text-5xl font-semibold">
         Features
       </h1>

@@ -12,7 +12,7 @@ function ChooseStreamSection() {
       icon: <FaYoutube size={70} color="#FE0032" />,
     },
     {
-      title: "soundCloud",
+      title: "soundcloud",
       icon: <RiSoundcloudFill size={70} color="#FD6F00" />,
     },
   ];

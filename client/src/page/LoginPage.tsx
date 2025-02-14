@@ -1,22 +1,26 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import ThemeToggle from "../component/ui/ThemeToggle";
 import { ArrowLeft } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../contexts/authContext";
+import { useEffect } from "react";
 
 function LoginPage() {
-  const location = useLocation();
   const { isAuthenticated } = useAuthContext();
-  const from = location.state?.from;
+  const navigate = useNavigate();
+  const from = localStorage.getItem("redirectUrl");
+
+  useEffect(() => {
+    if (isAuthenticated === "true" && from) {
+      navigate(from, { replace: true });
+      localStorage.removeItem("redirectUrl");
+    }
+  }, [isAuthenticated, from, navigate]);
 
   const handleLogin = () => {
     try {
       window.location.href = "http://localhost:3000/api/v1/auth/google";
-
-      if (from && isAuthenticated) {
-        localStorage.setItem("redirectAfterLogin", from);
-      }
     } catch (error) {
       toast.error("Something went wrong while logging in");
     }

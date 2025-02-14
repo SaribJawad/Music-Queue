@@ -7,8 +7,7 @@ import { api } from "./config/axios";
 import LoadingBar from "./component/ui/LoadingBar";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./component/ProtectedRoute";
-import StartStreamPage from "./page/StartStreamPage";
-import LiveStreamPage from "./page/LiveStreamPage";
+import StreamPage from "./page/StreamPage";
 
 function App() {
   const { isAuthenticated, setIsAuthenticated, setUserInfo } = useAuthContext();
@@ -19,24 +18,17 @@ function App() {
       try {
         setIsLoading(true);
         const response = await api.get("/auth/get-user");
-
         if (response.status === 200) {
           setIsAuthenticated("true");
           setUserInfo(response.data.data);
-
-          const redirectUrl = localStorage.getItem("redirectAfterLogin");
-          if (redirectUrl) {
-            window.location.href = redirectUrl;
-            localStorage.removeItem("redirectAfterLogin");
-            return;
-          }
+          localStorage.setItem("isAuthenticated", "true"); // Set directly here
         }
       } catch {
         setIsAuthenticated("false");
         setUserInfo(null);
+        localStorage.setItem("isAuthenticated", "false"); // Set directly here
       } finally {
         setIsLoading(false);
-        localStorage.setItem("isAuthenticated", isAuthenticated!);
       }
     };
 
@@ -60,25 +52,20 @@ function App() {
           path="/auth"
           element={
             isAuthenticated === "true" ? (
-              <Navigate to="/stream" replace />
+              <Navigate
+                to={localStorage.getItem("redirectUrl") || "/stream"}
+                replace
+              />
             ) : (
               <LoginPage />
             )
           }
         />
         <Route
-          path="/stream"
+          path="/stream/:streamId?"
           element={
             <ProtectedRoute>
-              <StartStreamPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/stream/:streamId"
-          element={
-            <ProtectedRoute>
-              <LiveStreamPage />
+              <StreamPage />
             </ProtectedRoute>
           }
         />
@@ -88,3 +75,21 @@ function App() {
 }
 
 export default App;
+{
+  /* <Route
+path="/stream"
+element={
+  <ProtectedRoute>
+    <StartStreamPage />
+  </ProtectedRoute>
+}
+/>
+<Route
+path="/stream/:streamId"
+element={
+  <ProtectedRoute>
+    <LiveStreamPage />
+  </ProtectedRoute>
+}
+/> */
+}

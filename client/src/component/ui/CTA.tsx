@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Button from "../Button";
 
 function CTA() {
@@ -11,7 +12,9 @@ function CTA() {
           Join MusicStream today and experience a new way of sharing and
           enjoying music with friends.
         </p>
-        <Button>Get Started For Free</Button>
+        <Link className="self-center" to="/auth">
+          <Button>Get Started For Free</Button>
+        </Link>
       </div>
     </section>
   );

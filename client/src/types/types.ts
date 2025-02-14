@@ -4,13 +4,13 @@ export interface IUser {
   name: string;
   email: string;
   avatar: string;
-  streams: IStream[];
+  streams: string[];
   isAlive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-type StreamTypes = "youtube" | "soundcloud";
+export type StreamTypes = "youtube" | "soundcloud";
 
 export interface IStream {
   _id: string;

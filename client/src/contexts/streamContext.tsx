@@ -2,11 +2,12 @@ import React, { createContext, useContext, useState } from "react";
 import { IStream } from "../types/types";
 import { api } from "../config/axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface StreamContextType {
   stream: IStream | null;
   setStream: React.Dispatch<React.SetStateAction<IStream | null>>;
-
+  endStream: (streamId: string) => Promise<void>;
   isAllStreamsLoading: boolean;
   setIsAllStreamsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   getStream: (streamId: string) => Promise<void>;
@@ -61,6 +62,28 @@ export const StreamContextProvider = ({
     }
   };
 
+  const endStream = async (streamId: string) => {
+    try {
+      const response = await api.delete(`/stream/${streamId}`);
+
+      if (response.status === 200) {
+        toast.success("Stream ended", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        navigate("/stream");
+      }
+    } catch (error) {
+      setError("Something went wrong while deleting stream");
+    } finally {
+      setIsGetStreamLoading(false);
+    }
+  };
+
   return (
     <StreamContext.Provider
       value={{
@@ -76,6 +99,7 @@ export const StreamContextProvider = ({
         isCreateStreamLoading,
         setIsCreateStreamLoading,
         createStream,
+        endStream,
       }}
     >
       {children}

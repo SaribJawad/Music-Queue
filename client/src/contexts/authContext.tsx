@@ -5,8 +5,10 @@ import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 interface AuthContextType {
-  isAuthenticated: string | null;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<string | null>>;
+  isAuthenticated: "true" | "false" | null;
+  setIsAuthenticated: React.Dispatch<
+    React.SetStateAction<"true" | "false" | null>
+  >;
   userInfo: IUser | null;
   setUserInfo: React.Dispatch<React.SetStateAction<IUser | null>>;
   logout: () => Promise<void>;
@@ -15,30 +17,34 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const GlobalProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<string | null>(
-    localStorage.getItem("isAuthenticated")
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState<
+    "true" | "false" | null | null
+  >(localStorage.getItem("isAuthenticated") as "true" | "false");
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
 
   const navigate = useNavigate();
 
   async function logout() {
-    const response = await api.get("/auth/google/logout");
+    try {
+      const response = await api.get("/auth/google/logout");
 
-    if (response.status === 200) {
-      localStorage.setItem("isAuthenticated", "false");
-      setIsAuthenticated(localStorage.getItem("isAuthenticated"));
-      toast.success("Logged out!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      navigate("/");
-      setUserInfo(null);
-    } else {
+      if (response.status === 200) {
+        setIsAuthenticated("false");
+        localStorage.setItem("isAuthenticated", "false");
+        localStorage.removeItem("redirectUrl");
+        toast.success("Logged out!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        navigate("/");
+      }
+    } catch (error) {
+      setIsAuthenticated("true");
+      localStorage.setItem("isAuthenticated", "true");
       toast.error("Something went wrong while logging out!", {
         position: "top-right",
         autoClose: 5000,

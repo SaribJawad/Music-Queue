@@ -109,49 +109,6 @@ const getStream = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, stream[0], "Stream fetch successfully"));
 });
 
-const getAllStreams = asyncHandler(async (req, res) => {
-  const streams = await Stream.aggregate([
-    {
-      $match: {},
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "owner",
-      },
-    },
-    {
-      $addFields: {
-        owner: { $first: "$owner" },
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        streamType: 1,
-        owner: {
-          _id: 1,
-          googleId: 1,
-          name: 1,
-          email: 1,
-        },
-        createdAt: 1,
-        updatedAt: 1,
-      },
-    },
-  ]);
-
-  if (!streams) {
-    throw new ApiError(500, "Something went wrong while fetching the streams");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, streams, "All streams fetched successfully"));
-});
-
 const endStream = asyncHandler(async (req, res) => {
   const { streamId } = req.params;
   const { _id: userId } = req.user as IUser;
@@ -172,7 +129,10 @@ const endStream = asyncHandler(async (req, res) => {
 
   await Stream.findByIdAndDelete(streamId);
 
-  await User.findByIdAndUpdate(userId, { isAlive: true });
+  await User.findByIdAndUpdate(userId, {
+    isAlive: false,
+    $pull: { streams: streamId },
+  });
 
   return res
     .status(200)
@@ -349,7 +309,6 @@ const removeSongFromQueue = asyncHandler(async (req, res) => {
 });
 
 export {
-  getAllStreams,
   createStream,
   endStream,
   clearSongQueue,

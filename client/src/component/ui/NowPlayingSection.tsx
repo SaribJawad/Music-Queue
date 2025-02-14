@@ -1,18 +1,28 @@
 import { useState } from "react";
-import { ISong } from "../../types/types";
+import { ISong, StreamTypes } from "../../types/types";
 import Button from "../Button";
 import { useSongContext } from "../../contexts/songContext";
 import { useParams } from "react-router-dom";
 import LoadingBar from "./LoadingBar";
 import YouTube from "react-youtube";
+import { Link } from "react-router-dom";
+import { useStreamContext } from "../../contexts/streamContext";
 
 interface NowPlayingSectionProps {
   currentSong: ISong | null;
   isOwner: boolean;
+  streamType: StreamTypes;
+  streamOwnerName: string;
 }
 
-function NowPlayingSection({ currentSong, isOwner }: NowPlayingSectionProps) {
+function NowPlayingSection({
+  currentSong,
+  isOwner,
+  streamType,
+  streamOwnerName,
+}: NowPlayingSectionProps) {
   const [input, setInput] = useState<string>("");
+  const { endStream } = useStreamContext();
   const { streamId } = useParams();
   const { addSong, isAddSongLoading, playNext } = useSongContext();
 
@@ -25,7 +35,7 @@ function NowPlayingSection({ currentSong, isOwner }: NowPlayingSectionProps) {
   };
 
   // TODOO
-  const opts = {
+  const youtubePlayerOpts = {
     height: "100%",
     width: "100%",
     playerVars: {
@@ -41,26 +51,39 @@ function NowPlayingSection({ currentSong, isOwner }: NowPlayingSectionProps) {
     <div className="lg:col-span-2 bg-background_light_secondary dark:bg-background_dark_secondary p-4 rounded-md  flex flex-col gap-2">
       <div className="flex justify-between">
         <h1 className="text-lg font-semibold dark:text-white text-background_dark ">
-          Now Playing
+          {streamOwnerName}'s Room
         </h1>
-        {isOwner && <Button size="sm">End stream</Button>}
+        {isOwner ? (
+          <Button onClick={() => endStream(streamId!)} size="sm">
+            End stream
+          </Button>
+        ) : (
+          <Link
+            className="px-4 py-1 dark:text-white text-text_light border border-purple-500 hover:bg-text_light hover:text-text_dark  dark:hover:bg-purple-700 duration-300 transition-all rounded-md text-sm w-fit self-center flex items-center gap-2"
+            to="/stream"
+          >
+            Leave
+          </Link>
+        )}
       </div>
       <div className="aspect-video  flex flex-col items-center justify-center  gap-2">
         {currentSong ? (
           <>
-            {/* handle with websockets  */}
-            {/*onReady={func}                    // defaults -> noop
-              onPlay={func}                     // defaults -> noop
-              onPause={func}                    // defaults -> noop
-              onEnd={func}
-           */}
-
-            <YouTube
-              videoId={currentSong.externalId}
-              opts={opts}
-              className="h-[90%] w-full"
-            />
-            <div className="flex items-center justify-between w-full">
+            {streamType === "youtube" ? (
+              <YouTube
+                //   handle with websockets
+                //  onReady={func}                    // defaults -> noop
+                //     onPlay={func}                     // defaults -> noop
+                //     onPause={func}                    // defaults -> noop
+                //     onEnd={func}
+                videoId={currentSong.externalId}
+                opts={youtubePlayerOpts}
+                className="h-[90%] w-full"
+              />
+            ) : (
+              "add sound cloud player"
+            )}
+            <div className="flex items-center gap-2 justify-between w-full">
               <h3 className="dark:text-text_dark text-text_light flex flex-col">
                 {currentSong?.title}
                 <span className="dark:text-zinc-500 text-background_dark_secondary text-sm">
@@ -90,7 +113,11 @@ function NowPlayingSection({ currentSong, isOwner }: NowPlayingSectionProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           type="text"
-          placeholder="Paste YouTube URL here"
+          placeholder={
+            streamType === "youtube"
+              ? "Paste YouTube URL here"
+              : "Add SoundCloud URL here"
+          }
           className="dark:bg-background_dark bg-background_light px-2 rounded-md outline-none flex-grow placeholder:text-sm placeholder:text-text_light dark:placeholder:text-white  dark:text-white text-text_light text-sm"
         />
         <Button

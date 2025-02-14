@@ -9,7 +9,10 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="bg-background_light dark:bg-background_dark w-full   text-center py-20 flex px-5 flex-col gap-10 ">
+    <section
+      id="how-it-works"
+      className="bg-background_light dark:bg-background_dark w-full   text-center py-20 flex px-5 flex-col gap-10 "
+    >
       <h1 className="dark:text-text_dark text-text_light text-4xl sm:text-5xl font-semibold">
         How it works
       </h1>
