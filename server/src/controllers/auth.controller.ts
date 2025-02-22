@@ -5,7 +5,7 @@ import { ApiError } from "src/utils/ApiError";
 import { ApiResponse } from "src/utils/ApiResponse";
 import { asyncHandler } from "src/utils/asyncHandler";
 import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN_SECRET } from "src/config/config";
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/config/config";
 import { Stream } from "src/models/stream.model";
 
 const generateAccessAndRefreshToken = async (
@@ -33,6 +33,58 @@ const generateAccessAndRefreshToken = async (
   }
 };
 
+const refreshAcccessToken = asyncHandler(async (req, res) => {
+  const incomingRequestToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRequestToken) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      String(incomingRequestToken),
+      REFRESH_TOKEN_SECRET!
+    );
+
+    const user = await User.findById((decodedToken as jwt.JwtPayload)._id);
+
+    if (!user) {
+      throw new ApiError(401, "Invalid refresh token");
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      new mongoose.Types.ObjectId(user._id)
+    );
+
+    return res
+      .status(200)
+      .clearCookie("refreshToken", options)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken },
+          "Access token refreshed"
+        )
+      );
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      throw new ApiError(401, "Refresh token expired, please login again");
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      throw new ApiError(401, "Invalid refresh token, please login again");
+    } else {
+      throw new ApiError(500, "Something went wrong while refreshing token");
+    }
+  }
+});
+
 const handleGoogleLogin = asyncHandler(async (req, res) => {
   const { id: googleId } = req.user as Profile;
 
@@ -55,7 +107,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
-  return res.redirect("http://localhost:5173/auth");
+  return res.redirect("http://localhost:5173/login");
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {
@@ -86,7 +138,9 @@ const getUserInfo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid user Id");
   }
 
-  const user = await User.findById(userId).select("-refreshToken");
+  const user = await User.findById(userId).select(
+    "-refreshToken -createdAt -updatedAt -__v"
+  );
 
   if (!user) {
     throw new ApiError(401, "User not found");
@@ -97,4 +151,9 @@ const getUserInfo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "User info fetched succesfully"));
 });
 
-export { handleGoogleLogin, handelGoogleLogout, getUserInfo };
+export {
+  handleGoogleLogin,
+  handelGoogleLogout,
+  getUserInfo,
+  refreshAcccessToken,
+};

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { IoMoonSharp } from "react-icons/io5";
+import { FiSun } from "react-icons/fi";
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -16,12 +17,12 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-1 rounded-lg transition-colors bg-purple-200 dark:bg-gray-800"
+      className="p-1  rounded-lg transition-colors bg-background_light_secondary dark:bg-gray-800"
     >
       {theme === "dark" ? (
-        <Sun className="text-yellow-500" size={22} />
+        <FiSun className="text-yellow-500" size={22} />
       ) : (
-        <Moon className="text-gray-900" size={22} />
+        <IoMoonSharp className="text-gray-900" size={22} />
       )}
     </button>
   );

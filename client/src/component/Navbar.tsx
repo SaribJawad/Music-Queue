@@ -1,60 +1,96 @@
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Button from "./Button";
 import ThemeToggle from "./ui/ThemeToggle";
+import { useState } from "react";
+import { AnimatePresence } from "motion/react";
+import Dialog from "./ui/Dialog";
 
-function Navbar() {
-  const [activeSection, setActiveSection] = useState("");
+interface NavbarProps {
+  variant?: NavbarVariant;
+  username?: string;
+}
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(sectionId);
+type NavbarVariant = "guest" | "user" | "stream";
+
+const Navbar = ({ variant = "guest", username }: NavbarProps) => {
+  const [dialog, setDialog] = useState<"logout" | "endStream" | null>(null);
+  const navigate = useNavigate();
+
+  const handleDialogClose = () => {
+    setDialog(null);
+  };
+
+  const renderLeftContent = () => {
+    switch (variant) {
+      case "guest":
+        return (
+          <Button onClick={() => navigate(-1)} size="sm">
+            Go Back
+          </Button>
+        );
+
+      case "stream":
+        return (
+          <h1 className="text-text_dark_secondary dark:text-text_dark sm:text-base text-sm">
+            <b>{username}'s</b> room
+          </h1>
+        );
+
+      case "user":
+        return (
+          <h1>
+            Welcome,{" "}
+            <b className="text-text_dark_secondary dark:text-text_dark">
+              {username}
+            </b>
+          </h1>
+        );
+
+      default:
+        return null;
     }
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["features", "how-it-works"];
-      const currentSection = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-
-      if (currentSection) {
-        setActiveSection(currentSection);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const renderRightContent = () => {
+    return (
+      <div className="flex items-center gap-2">
+        <AnimatePresence>
+          {dialog === "logout" && (
+            <Dialog
+              closeDialog={handleDialogClose}
+              title="You sure you want to logout"
+              btnContent="Logout"
+            />
+          )}
+          {dialog === "endStream" && (
+            <Dialog
+              closeDialog={handleDialogClose}
+              title="You sure you want to end Stream?"
+              btnContent="End stream"
+            />
+          )}
+        </AnimatePresence>
+        {variant === "user" && (
+          <Button size="sm" onClick={() => setDialog("logout")}>
+            Logout
+          </Button>
+        )}
+        {variant === "stream" && (
+          <Button size="sm" onClick={() => setDialog("endStream")}>
+            End stream
+          </Button>
+        )}
+        <ThemeToggle />
+      </div>
+    );
+  };
 
   return (
-    <nav className="py-4 px-6 flex items-center justify-between lg:w-[80%] w-full lg:mx-auto">
-      <h1 className="text-xl font-semibold text-text_light dark:text-text_dark">
-        Music Queue
-      </h1>
-      <ul className="items-center gap-10 justify-center sm:flex hidden dark:text-white text-text_light">
-        <li
-          onClick={() => scrollToSection("features")}
-          className="cursor-pointer"
-        >
-          Features
-        </li>
-        <li
-          onClick={() => scrollToSection("how-it-works")}
-          className="cursor-pointer "
-        >
-          How it works
-        </li>
-      </ul>
-      <ThemeToggle />
+    <nav className="flex items-center justify-between  p-2 sm:p-4 ">
+      {renderLeftContent()}
+      {renderRightContent()}
     </nav>
   );
-}
+};
 
 export default Navbar;

@@ -1,5 +1,5 @@
 import Footer from "../component/Footer";
-import Navbar from "../component/Navbar";
+import Header from "../component/Header";
 import CTA from "../component/ui/CTA";
 import FeatureSection from "../component/ui/FeatureSection";
 import HeroSection from "../component/ui/HeroSection";
@@ -8,7 +8,7 @@ import HowItWorks from "../component/ui/HowItWorks";
 function LandingPage() {
   return (
     <div className="h-dvh w-full bg-background_light dark:bg-background_dark text-text_light dark:text-text_dark ">
-      <Navbar />
+      <Header />
       <main>
         <HeroSection />
         <FeatureSection />

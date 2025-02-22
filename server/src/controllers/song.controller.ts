@@ -9,17 +9,7 @@ import { IUser } from "src/models/user.model";
 import youtubesearchapi from "youtube-search-api";
 import mongoose from "mongoose";
 import { extractYouTubeID } from "src/utils/extractYoutubeId";
-
-const objectIdRegex = /^[a-f\d]{24}$/i;
-
-const addSongSchema = z.object({
-  externalId: z.string().min(1, "External ID is required"),
-  title: z.string().min(1, "Title is required"),
-  coverImageUrl: z.string().url("Invalid cover image URL"),
-  artist: z.string(),
-  source: z.enum(["soundcloud", "youtube"]),
-  stream: z.string().regex(objectIdRegex, "Invalid MongoDB ObjectID"),
-});
+import { addSongSchema } from "src/schema/addSongSchema";
 
 const addSong = asyncHandler(async (req, res) => {
   const { streamId } = req.params;

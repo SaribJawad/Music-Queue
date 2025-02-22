@@ -4,6 +4,7 @@ import {
   getUserInfo,
   handelGoogleLogout,
   handleGoogleLogin,
+  refreshAcccessToken,
 } from "src/controllers/auth.controller";
 import { verifyJWT } from "src/middlewares/auth.middleware";
 
@@ -13,6 +14,7 @@ router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
+router.post("/refresh-token", refreshAcccessToken);
 
 router.get(
   "/google/callback",
