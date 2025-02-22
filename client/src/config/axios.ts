@@ -59,18 +59,15 @@ api.interceptors.response.use(
         processQueue();
 
         return api(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError);
+      } catch (error) {
+        processQueue(error);
 
         // Only redirect for auth-related errors
-        if (
-          refreshError instanceof AxiosError &&
-          refreshError.response?.status === 401
-        ) {
+        if (error instanceof AxiosError && error.response?.status === 401) {
           window.location.href = "/login";
         }
 
-        return Promise.reject(refreshError);
+        return Promise.reject(error);
       } finally {
         isRefreshing = false;
       }

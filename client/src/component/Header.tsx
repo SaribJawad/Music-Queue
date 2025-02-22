@@ -1,37 +1,12 @@
-import { useEffect, useState } from "react";
 import ThemeToggle from "./ui/ThemeToggle";
 
 function Header() {
-  const [activeSection, setActiveSection] = useState("");
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
-      setActiveSection(sectionId);
     }
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["features", "how-it-works"];
-      const currentSection = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-
-      if (currentSection) {
-        setActiveSection(currentSection);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   return (
     <nav className="py-4 px-6 flex items-center justify-between lg:w-[80%] w-full lg:mx-auto">

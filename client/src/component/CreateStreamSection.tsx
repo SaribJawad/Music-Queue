@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaYoutube } from "react-icons/fa6";
 import { RiSoundcloudFill } from "react-icons/ri";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import CreateStreamDialog from "./ui/CreateStreamDialog";
 
 function CreateStreamSection() {

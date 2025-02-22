@@ -5,16 +5,8 @@ import LoginPage from "./page/LoginPage";
 import StreamPage from "./page/StreamPage";
 import LiveStreamPage from "./page/LiveStreamPage";
 import NotFoundPage from "./page/NotFoundPage";
-import { useGetUser } from "./customHooks/useGetUser";
-import LoadingBar from "./component/ui/LoadingBar";
 
 function App() {
-  const { isLoading } = useGetUser();
-
-  if (isLoading) {
-    <LoadingBar />;
-  }
-
   return (
     <div>
       <ToastContainer />

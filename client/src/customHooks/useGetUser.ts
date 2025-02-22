@@ -33,7 +33,6 @@ export const useGetUser = () => {
         const parsedData = GetUserResponseSchema.parse(response.data);
 
         dispatch(setAuthSuccess(parsedData.data));
-        console.log(parsedData);
         return parsedData;
       } catch (error) {
         let errorMessage = "Something went wrong getting user data";
