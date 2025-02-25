@@ -31,6 +31,10 @@ api.interceptors.response.use(
   (response) => response,
 
   async (error: AxiosError) => {
+    if (window.location.pathname === "/login") {
+      return Promise.reject(error);
+    }
+
     const originalRequest = error.config as CustomAxiosRequestConfig;
 
     if (!originalRequest) {

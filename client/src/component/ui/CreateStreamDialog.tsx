@@ -6,6 +6,7 @@ import { z } from "zod";
 
 interface CreateStreamDialogProps {
   setIsOpen: (arg: boolean) => void;
+  handleCreateRoom: (roomName: string, roomPassword: string) => void;
 }
 
 const FormSchema = z.object({
@@ -21,7 +22,10 @@ const FormSchema = z.object({
 
 type IFormInput = z.infer<typeof FormSchema>;
 
-const CreateStreamDialog = ({ setIsOpen }: CreateStreamDialogProps) => {
+const CreateStreamDialog = ({
+  setIsOpen,
+  handleCreateRoom,
+}: CreateStreamDialogProps) => {
   const {
     register,
     handleSubmit,
@@ -29,7 +33,7 @@ const CreateStreamDialog = ({ setIsOpen }: CreateStreamDialogProps) => {
   } = useForm<IFormInput>({ resolver: zodResolver(FormSchema) });
 
   const onSubmit = (data: IFormInput) => {
-    console.log("Room Created:", data);
+    handleCreateRoom(data.name, data.password);
   };
 
   return (

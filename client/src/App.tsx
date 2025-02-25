@@ -1,20 +1,42 @@
 import { Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import LandingPage from "./page/LandingPage";
-import { ToastContainer } from "react-toastify";
 import LoginPage from "./page/LoginPage";
-import StreamPage from "./page/StreamPage";
 import LiveStreamPage from "./page/LiveStreamPage";
 import NotFoundPage from "./page/NotFoundPage";
+import PrivateRoutes from "./routes/PrivateRoutes";
+import PublicRoutes from "./routes/PublicRoutes";
+import RoomPage from "./page/RoomPage";
+import { useGetUser } from "./customHooks/useGetUser";
+import LoadingBar from "./component/ui/LoadingBar";
+import WebSocketRoutes from "./routes/WebSocketRoutes";
 
 function App() {
+  const { isLoading } = useGetUser();
+
+  if (isLoading) {
+    return (
+      <div className="h-dvh w-full flex items-center justify-center dark:bg-background_dark bg-background_light ">
+        <LoadingBar />
+      </div>
+    );
+  }
+
   return (
     <div>
-      <ToastContainer />
+      <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/stream" element={<StreamPage />} />
-        <Route path="/stream/:streamId" element={<LiveStreamPage />} />
+        <Route index element={<LandingPage />} />
+        <Route element={<PublicRoutes />}>
+          <Route path="/login" element={<LoginPage />} />
+        </Route>
+        <Route element={<PrivateRoutes />}>
+          <Route element={<WebSocketRoutes />}>
+            <Route path="/room" element={<RoomPage />} />
+            <Route path="/room/:roomId" element={<LiveStreamPage />} />
+          </Route>
+        </Route>
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>

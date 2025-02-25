@@ -1,5 +1,5 @@
 import { Song } from "src/models/song.model";
-import { Stream } from "src/models/stream.model";
+import { Room } from "src/models/room.model";
 import { addSongSchema } from "src/schema/addSongSchema";
 import { extractYouTubeID } from "src/utils/extractYoutubeId";
 import { WebSocket } from "ws";
@@ -20,9 +20,9 @@ export async function handleAddSong({
 }: JoinRoomProps) {
   if (!currentRoom) return;
   console.log(currentRoom, "streammmmm");
-  const stream = await Stream.findById(currentRoom);
+  const room = await Room.findById(currentRoom);
 
-  if (!stream) throw new Error("Stream not URL");
+  if (!room) throw new Error("Stream not URL");
   console.log(data.url, "YOUTUBE URL");
   const extractedId = extractYouTubeID(data.url);
 
@@ -37,15 +37,15 @@ export async function handleAddSong({
     thumbnail: { thumbnails },
   } = await youtubesearchapi.GetVideoDetails(extractedId);
 
-  console.log(stream._id, thumbnails[thumbnails.length - 1].url);
+  console.log(room._id, thumbnails[thumbnails.length - 1].url);
 
   const validatedData = addSongSchema.parse({
     externalId: id,
     title,
-    source: stream.streamType,
+    source: room.roomType,
     artist: channel,
     coverImageUrl: thumbnails[thumbnails.length - 1].url,
-    stream: stream._id.toString(),
+    stream: room._id.toString(),
   });
 
   const song = await Song.create(validatedData);
@@ -55,17 +55,15 @@ export async function handleAddSong({
   }
 
   let updateQuery;
-  if (!stream.currentSong && stream.songQueue.length === 0) {
+  if (!room.currentSong && room.songQueue.length === 0) {
     updateQuery = { currentSong: song };
   } else {
     updateQuery = { $push: { songQueue: song } };
   }
 
-  const updatedStream = await Stream.findByIdAndUpdate(
-    stream._id,
-    updateQuery,
-    { new: true }
-  );
+  const updatedStream = await Room.findByIdAndUpdate(room._id, updateQuery, {
+    new: true,
+  });
 
   if (!updatedStream) {
     throw new Error("Something went wrong while adding strong the stream");

@@ -23,7 +23,7 @@ type GetUserResponse = z.infer<typeof GetUserResponseSchema>;
 export const useGetUser = () => {
   const dispatch = useAppDispatch();
 
-  return useQuery<GetUserResponse, AxiosError<ErrorType>>({
+  const query = useQuery<GetUserResponse, AxiosError<ErrorType>>({
     queryKey: ["user"],
     queryFn: async (): Promise<GetUserResponse> => {
       dispatch(setAuthStart());
@@ -52,4 +52,8 @@ export const useGetUser = () => {
     retryOnMount: false,
     refetchOnWindowFocus: false,
   });
+
+  return location.pathname === "/login"
+    ? { data: null, isLoading: false, error: null }
+    : query;
 };

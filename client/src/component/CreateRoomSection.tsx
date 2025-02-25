@@ -1,0 +1,77 @@
+import { useState } from "react";
+import { FaYoutube } from "react-icons/fa6";
+import { RiSoundcloudFill } from "react-icons/ri";
+import { AnimatePresence } from "motion/react";
+import CreateStreamDialog from "./ui/CreateStreamDialog";
+import { useWebSocketContext } from "../contexts/webSocketProvider";
+import { showToast } from "../utils/showToast";
+
+function CreateRoomSection() {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [roomType, setRoomType] = useState<"youtube" | "soundcloud">();
+  const { sendMessage, isConnected } = useWebSocketContext();
+
+  const providers = [
+    { name: "youtube", icon: <FaYoutube size={30} color="#F70000" /> },
+    {
+      name: "soundcloud",
+      icon: <RiSoundcloudFill size={30} color="#F76F0D" />,
+    },
+  ];
+
+  const handleCreateRoom = (roomName: string, roomPassword: string) => {
+    const createRoomData = {
+      roomType,
+      roomName,
+      roomPassword,
+    };
+
+    const sent = sendMessage(createRoomData, "CREATE_ROOM");
+
+    if (sent) {
+      showToast("success", "Room created!");
+      setIsModalOpen(false);
+    } else if (isConnected) {
+      console.warn(
+        "Failed to send message even though connection is established"
+      );
+    } else {
+      showToast("error", "Something went wrong! Try again.");
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-5 lg:flex-1   ">
+      <AnimatePresence>
+        {isModalOpen && (
+          <CreateStreamDialog
+            setIsOpen={setIsModalOpen}
+            handleCreateRoom={handleCreateRoom}
+          />
+        )}
+      </AnimatePresence>
+      <h1 className="sm:text-xl text-base font-semibold  ">
+        Choose a provider to create a stream
+      </h1>
+      <div className="grid xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-3 grid-cols-2 gap-3">
+        {providers.map((provider) => (
+          <button
+            onClick={() => {
+              setIsModalOpen((prev) => !prev);
+              setRoomType(provider.name as "youtube" | "soundcloud");
+            }}
+            key={provider.name}
+            className="flex    dark:bg-background_dark flex-col rounded-lg  items-center  p-4 sm:p-10 hover:rounded-none transition-all duration-300 bg-background_light"
+          >
+            <h3 className="md:text-base dark:text-text_dark text-text_light text-sm capitalize">
+              {provider.name}
+            </h3>
+            {provider.icon}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default CreateRoomSection;

@@ -3,7 +3,7 @@ import { asyncHandler } from "src/utils/asyncHandler";
 import { ApiResponse } from "src/utils/ApiResponse";
 import { ApiError } from "src/utils/ApiError";
 import { z } from "zod";
-import { Stream } from "src/models/stream.model";
+import { Room } from "src/models/room.model";
 import { IUser } from "src/models/user.model";
 // @ts-ignore
 import youtubesearchapi from "youtube-search-api";
@@ -23,10 +23,10 @@ const addSong = asyncHandler(async (req, res) => {
     // TODO add check for youtube and soundcloud
     // Handle add song for souncloud
 
-    const stream = await Stream.findById(streamId);
+    const stream = await Room.findById(streamId);
 
     if (!stream) {
-      throw new ApiError(404, "Stream not found");
+      throw new ApiError(404, "Room not found");
     }
 
     const extractedId = extractYouTubeID(url);
@@ -45,7 +45,7 @@ const addSong = asyncHandler(async (req, res) => {
     const validatedData = addSongSchema.parse({
       externalId: id,
       title,
-      source: stream.streamType,
+      source: stream.roomType,
       artist: channel,
       coverImageUrl: thumbnails[thumbnails.length - 1].url,
       stream: streamId,
@@ -64,16 +64,14 @@ const addSong = asyncHandler(async (req, res) => {
       updateQuery = { $push: { songQueue: song } };
     }
 
-    const updatedStream = await Stream.findByIdAndUpdate(
-      streamId,
-      updateQuery,
-      { new: true }
-    );
+    const updatedStream = await Room.findByIdAndUpdate(streamId, updateQuery, {
+      new: true,
+    });
 
     if (!updatedStream) {
       throw new ApiError(
         400,
-        "Something went wrong while adding strong the stream"
+        "Something went wrong while adding strong the room"
       );
     }
 

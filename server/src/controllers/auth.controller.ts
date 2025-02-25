@@ -6,7 +6,7 @@ import { ApiResponse } from "src/utils/ApiResponse";
 import { asyncHandler } from "src/utils/asyncHandler";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/config/config";
-import { Stream } from "src/models/stream.model";
+import { Room } from "src/models/room.model";
 
 const generateAccessAndRefreshToken = async (
   userId: Types.ObjectId
@@ -107,7 +107,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
-  return res.redirect("http://localhost:5173/login");
+  return res.redirect("http://localhost:5173/room");
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {
@@ -118,9 +118,9 @@ const handelGoogleLogout = asyncHandler(async (req, res) => {
   }
 
   try {
-    await Stream.deleteMany({ owner: userId });
+    await Room.deleteMany({ owner: userId });
   } catch (error) {
-    throw new ApiError(500, "Something went wrong while deleting the stream");
+    throw new ApiError(500, "Something went wrong while deleting the room");
   }
 
   res.clearCookie("accessToken");

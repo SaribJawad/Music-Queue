@@ -2,25 +2,35 @@ import mongoose, { Schema } from "mongoose";
 import { ISong } from "./song.model";
 import { IUser } from "./user.model";
 
-type StreamTypes = "youtube" | "soundcloud";
+type RoomTypes = "youtube" | "soundcloud";
 
-export interface IStream extends Document {
-  streamType: StreamTypes;
+export interface IRoom extends Document {
+  roomType: RoomTypes;
+  roomName: string;
+  roomPassword: string;
   owner: IUser;
   songQueue: ISong[];
   currentSong: ISong | null;
 }
 
-const streamSchema: Schema<IStream> = new Schema(
+const roomSchema: Schema<IRoom> = new Schema(
   {
-    streamType: {
+    roomType: {
       type: String,
       enum: ["youtube", "soundcloud"],
+      required: true,
+    },
+    roomName: {
+      type: String,
       required: true,
     },
     owner: {
       type: mongoose.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    roomPassword: {
+      type: String,
       required: true,
     },
     songQueue: [
@@ -38,4 +48,4 @@ const streamSchema: Schema<IStream> = new Schema(
   { timestamps: true }
 );
 
-export const Stream = mongoose.model("Stream", streamSchema);
+export const Room = mongoose.model("Room", roomSchema);

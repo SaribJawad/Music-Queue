@@ -1,20 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserSchema } from "../../schemas/userSchema";
 import { z } from "zod";
+import { RootState } from "../../app/store";
 
 export type UserType = z.infer<typeof UserSchema>;
 
 interface AuthState {
   isAuthenticated: boolean;
   isAuthLoading: boolean;
-  userInfo?: UserType;
+  userInfo: UserType | null;
   isLive: boolean;
   authError: string | null;
 }
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  userInfo: undefined,
+  userInfo: null,
   isAuthLoading: false,
   isLive: false,
   authError: null,
@@ -52,5 +53,6 @@ export default authSlice.reducer;
 
 // selectors
 
-export const selectAuthState = (state: any) => state.auth;
-export const selectIsAuthenticated = (state: any) => state.auth.isAuthenticated;
+export const selectUserInfo = (state: RootState) => state.auth.userInfo;
+export const selectIsAuthenticated = (state: RootState) =>
+  state.auth.isAuthenticated;

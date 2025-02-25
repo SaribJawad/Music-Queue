@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IStream } from "./stream.model";
+import { IStream } from "./room.model";
 
 type Source = "youtube" | "soundcloud";
 

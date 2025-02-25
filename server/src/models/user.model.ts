@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IStream } from "./stream.model";
+import { IRoom } from "./room.model";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,
@@ -7,7 +7,6 @@ import {
   REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_EXPIRY,
 } from "src/config/config";
-import { boolean } from "zod";
 
 export interface IUser extends Document {
   _id: string;
@@ -15,7 +14,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   avatar?: string;
-  streams: IStream[];
+  rooms: IRoom[];
   isAlive: boolean;
   refreshToken?: string;
   generateAccessToken: () => string;
@@ -28,7 +27,7 @@ const userSchema: Schema<IUser> = new Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     avatar: { type: String },
-    streams: [{ type: Schema.Types.ObjectId, ref: "Stream" }],
+    rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
     refreshToken: { type: String },
     isAlive: { type: Boolean, default: false, required: true },
   },
