@@ -11,6 +11,7 @@ interface AuthState {
   userInfo: UserType | null;
   isLive: boolean;
   authError: string | null;
+  isJoined: { status: boolean; roomId: string | null };
 }
 
 const initialState: AuthState = {
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   isAuthLoading: false,
   isLive: false,
   authError: null,
+  isJoined: { status: false, roomId: null },
 };
 
 export const authSlice = createSlice({
@@ -36,6 +38,8 @@ export const authSlice = createSlice({
       state.userInfo = parsedUser;
       state.isAuthLoading = false;
       state.isLive = parsedUser.isAlive;
+      state.isJoined.status = parsedUser.isJoined.status;
+      state.isJoined.roomId = parsedUser.isJoined.roomId;
       state.authError = null;
     },
     setAuthFailure: (state, action: PayloadAction<string>) => {
@@ -43,11 +47,31 @@ export const authSlice = createSlice({
       state.isAuthLoading = false;
       state.authError = action.payload;
     },
+    setUserIsLive: (state, action: PayloadAction<string>) => {
+      if (state.userInfo) {
+        state.userInfo = {
+          ...state.userInfo,
+          rooms: [...state.userInfo.rooms, action.payload],
+          isAlive: true,
+        };
+        state.isLive = true;
+      }
+    },
+    setUserIsJoinedLive: (state, action: PayloadAction<string>) => {
+      state.isLive = false;
+      state.isJoined.status = true;
+      state.isJoined.roomId = action.payload;
+    },
   },
 });
 
-export const { setAuthStart, setAuthSuccess, setAuthFailure } =
-  authSlice.actions;
+export const {
+  setAuthStart,
+  setAuthSuccess,
+  setAuthFailure,
+  setUserIsLive,
+  setUserIsJoinedLive,
+} = authSlice.actions;
 
 export default authSlice.reducer;
 
@@ -56,3 +80,6 @@ export default authSlice.reducer;
 export const selectUserInfo = (state: RootState) => state.auth.userInfo;
 export const selectIsAuthenticated = (state: RootState) =>
   state.auth.isAuthenticated;
+export const selectIsLive = (state: RootState) => {
+  return state.auth.isLive;
+};

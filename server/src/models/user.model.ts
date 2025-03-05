@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { ObjectId, Schema } from "mongoose";
 import { IRoom } from "./room.model";
 import jwt from "jsonwebtoken";
 import {
@@ -9,13 +9,14 @@ import {
 } from "src/config/config";
 
 export interface IUser extends Document {
-  _id: string;
+  _id: ObjectId;
   googleId: string;
   name: string;
   email: string;
   avatar?: string;
   rooms: IRoom[];
   isAlive: boolean;
+  isJoined: { status: boolean; roomId: ObjectId };
   refreshToken?: string;
   generateAccessToken: () => string;
   generateRefreshToken: () => string;
@@ -28,6 +29,10 @@ const userSchema: Schema<IUser> = new Schema(
     email: { type: String, required: true, unique: true },
     avatar: { type: String },
     rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }],
+    isJoined: {
+      status: { type: Boolean, required: true, default: false },
+      roomId: { type: Schema.Types.ObjectId, ref: "Room", default: null },
+    },
     refreshToken: { type: String },
     isAlive: { type: Boolean, default: false, required: true },
   },

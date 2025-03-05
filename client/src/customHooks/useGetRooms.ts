@@ -27,7 +27,6 @@ export const useGetRooms = () => {
         const parsedResponse = UseGetRoomResponseSchema.safeParse(
           response.data
         );
-
         dispatch(setAllRooms(parsedResponse?.data?.data!));
 
         return parsedResponse.data!;
@@ -43,6 +42,7 @@ export const useGetRooms = () => {
         throw error;
       }
     },
+
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });

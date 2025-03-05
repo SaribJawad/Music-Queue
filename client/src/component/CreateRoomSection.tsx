@@ -5,9 +5,12 @@ import { AnimatePresence } from "motion/react";
 import CreateStreamDialog from "./ui/CreateStreamDialog";
 import { useWebSocketContext } from "../contexts/webSocketProvider";
 import { showToast } from "../utils/showToast";
+import { useAppSelector } from "../app/hook";
+import { selectUserInfo } from "../features/auth/auth.slice";
 
 function CreateRoomSection() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const loggedInUser = useAppSelector(selectUserInfo);
   const [roomType, setRoomType] = useState<"youtube" | "soundcloud">();
   const { sendMessage, isConnected } = useWebSocketContext();
 
@@ -21,6 +24,7 @@ function CreateRoomSection() {
 
   const handleCreateRoom = (roomName: string, roomPassword: string) => {
     const createRoomData = {
+      userId: loggedInUser?._id,
       roomType,
       roomName,
       roomPassword,

@@ -10,16 +10,16 @@ import { selectAllRooms } from "../features/room/room.slice";
 function CurrentlyLiveStreamSection() {
   const { isLoading: isGettingRoomLoading } = useGetRooms();
   const rooms = useAppSelector(selectAllRooms);
-  const [isJoinStreamDialogOpen, setIsJoinStreamDialogOpen] =
-    useState<boolean>(false);
+  //   const [isJoinStreamDialogOpen, setIsJoinStreamDialogOpen] =
+  //     useState<boolean>(false);
 
   return (
     <div className="md:w-[350px] w-full flex flex-col gap-5 ">
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {isJoinStreamDialogOpen && (
           <JoinStreamDialog setIsOpen={setIsJoinStreamDialogOpen} />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
       <h1 className="sm:text-xl text-base font-semibold">Live streams</h1>
       <div className="flex flex-col gap-3">
         {isGettingRoomLoading ? (
@@ -27,12 +27,13 @@ function CurrentlyLiveStreamSection() {
             <LoadingBar />
           </div>
         ) : (
-          rooms.map((room) => (
+          rooms?.map((room) => (
             <LiveStreamList
               key={room._id}
               roomName={room.roomName}
               roomType={room.roomType}
-              setOpenModal={setIsJoinStreamDialogOpen}
+              roomId={room._id}
+              //   setOpenModal={setIsJoinStreamDialogOpen}
             />
           ))
         )}

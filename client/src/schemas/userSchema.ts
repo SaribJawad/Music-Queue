@@ -8,6 +8,10 @@ export const UserSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   avatar: z.string(),
-  streams: z.array(z.string().optional()),
+  rooms: z.array(z.string().optional()),
   isAlive: z.boolean(),
+  isJoined: z.object({
+    status: z.boolean(),
+    roomId: z.string().regex(objectIdRegex).or(z.null()),
+  }),
 });

@@ -1,12 +1,17 @@
-import { IncomingMessage, Server } from "http";
+import { Server } from "http";
 import jwt from "jsonwebtoken";
 import * as cookie from "cookie";
 import { WebSocket, WebSocketServer } from "ws";
 import { ACCESS_TOKEN_SECRET } from "src/config/config";
 import RoomService from "src/services/RoomService";
-import { CreateRoomSchema } from "src/schema/createRoomSchema";
+import {
+  handleCreateRoom,
+  handleJoinRoom,
+  handleRefreshJoinRoom,
+} from "src/handlers/roomHandler";
+import { handleAddSong } from "src/handlers/songHandler";
 
-interface ClientMessage {
+export interface ClientMessage {
   action: string;
   payload: any;
   requestId?: string;
@@ -31,8 +36,6 @@ class WebSocketService {
   private async handleConnection(ws: WebSocket, req: any) {
     const cookies = cookie.parse(req.headers.cookie || "");
     const accessToken = cookies.accessToken || null;
-    const refreshToken = cookies.refreshToken || null;
-
     try {
       const decodedToken = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET!);
       this.userId = (decodedToken as jwt.JwtPayload)._id;
@@ -41,9 +44,11 @@ class WebSocketService {
       return;
     }
 
-    await RoomService.initializeRooms().catch((err) => {
-      console.error("Failed to initialize rooms:", err);
-    });
+    // await RoomService.initializeRooms().catch((err) => {
+    //   console.error("Failed to initialize rooms:", err);
+    // });
+
+    console.log("on intialize", RoomService.rooms);
 
     ws.on("message", (data: ClientMessage) =>
       this.handleMessage(ws, data.toString())
@@ -57,34 +62,19 @@ class WebSocketService {
 
       switch (clientData.action) {
         case "CREATE_ROOM":
-          const parsedClientData = CreateRoomSchema.safeParse(
-            clientData.payload
-          );
+          await handleCreateRoom({ ws, clientData, wsService: this });
+          break;
 
-          if (!parsedClientData.success) {
-            const errorMsg = parsedClientData.error.errors
-              .map((err) => err.message)
-              .join(", ");
-            this.sendMessage(ws, "ERROR", errorMsg);
-            return;
-          }
+        case "ADD_SONG":
+          await handleAddSong({ ws, clientData, wsService: this });
+          break;
 
-          const { roomName, roomPassword, roomType } = parsedClientData.data;
+        case "JOIN_ROOM":
+          await handleJoinRoom({ ws, clientData, wsService: this });
+          break;
 
-          const room = await RoomService.createRoom({
-            ws,
-            roomName,
-            roomPassword,
-            roomType,
-            userId: this.userId!,
-          });
-          if (!room) {
-            this.sendMessage(ws, "ERROR", "Failed to create room");
-            return;
-          }
-
-          this.broadcast("CREATE_ROOM", room);
-
+        case "REFRESH_JOIN_ROOM":
+          await handleRefreshJoinRoom({ ws, clientData, wsService: this });
           break;
 
         default:
@@ -110,8 +100,8 @@ class WebSocketService {
 
   // send to specific
   public sendMessage(ws: WebSocket, action: string, payload?: any) {
-    const messsage: ServerMessage = { action, payload };
-    ws.readyState === WebSocket.OPEN && ws.send(JSON.stringify(messsage));
+    const message: ServerMessage = { action, payload };
+    ws.readyState === WebSocket.OPEN && ws.send(JSON.stringify(message));
   }
 
   // send to all except sender
@@ -120,11 +110,58 @@ class WebSocketService {
     action: string,
     payload?: any
   ) {
-    const messsage: ServerMessage = { action, payload };
+    const message: ServerMessage = { action, payload };
 
     this.wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(messsage));
+        client.send(JSON.stringify(message));
+      }
+    });
+  }
+
+  // send to everyone in room
+  public sendMessageToEveryoneInRoom(
+    roomUsers: WebSocket[],
+    action: string,
+    payload?: any
+  ) {
+    const message: ServerMessage = { action, payload };
+
+    roomUsers.forEach((user) => {
+      if (user.readyState === WebSocket.OPEN) {
+        user.send(JSON.stringify(message));
+      }
+    });
+  }
+
+  // send to everyone in room except sender
+  public sendMessageToEveryoneExpectSenderInRoom(
+    ws: WebSocket,
+    roomUsers: WebSocket[],
+    action: string,
+    payload?: any
+  ) {
+    const message: ServerMessage = { action, payload };
+
+    roomUsers.forEach((user) => {
+      if (user !== ws && user.readyState === WebSocket.OPEN) {
+        user.send(JSON.stringify(message));
+      }
+    });
+  }
+
+  // send to everyone in room except owner
+  public sendMessageToEveryoneExceptOwnerInRoom(
+    ownerWs: WebSocket,
+    roomUsers: Set<WebSocket>,
+    action: string,
+    payload?: any
+  ) {
+    const message: ServerMessage = { action, payload };
+
+    roomUsers.forEach((user) => {
+      if (user !== ownerWs && user.readyState === WebSocket.OPEN) {
+        user.send(JSON.stringify(message));
       }
     });
   }

@@ -3,9 +3,12 @@ import Button from "../Button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useWebSocketContext } from "../../contexts/webSocketProvider";
+import { showToast } from "../../utils/showToast";
 
 interface CreateStreamDialogProps {
   setIsOpen: (arg: boolean) => void;
+  roomId: string;
 }
 
 const FormSchema = z.object({
@@ -14,7 +17,8 @@ const FormSchema = z.object({
 
 type IFormData = z.infer<typeof FormSchema>;
 
-function JoinStreamDialog({ setIsOpen }: CreateStreamDialogProps) {
+function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
+  const { isConnected, sendMessage } = useWebSocketContext();
   const {
     register,
     handleSubmit,
@@ -24,7 +28,20 @@ function JoinStreamDialog({ setIsOpen }: CreateStreamDialogProps) {
   });
 
   const onSubmit = (data: IFormData) => {
-    console.log("Room Created:", data);
+    const sent = sendMessage(
+      { roomPassword: data.password, roomId },
+      "JOIN_ROOM"
+    );
+
+    if (sent) {
+      setIsOpen(false);
+    } else if (isConnected) {
+      console.warn(
+        "Failed to send message even though connection is established"
+      );
+    } else {
+      showToast("error", "Something went wrong! Try again.");
+    }
   };
 
   return (

@@ -4,18 +4,21 @@ import { Outlet, useNavigate } from "react-router-dom";
 import LoadingBar from "../component/ui/LoadingBar";
 
 function PrivateRoutes() {
-  const { isAuthenticated, isLive, isAuthLoading } = useAppSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated, isLive, isAuthLoading, userInfo, isJoined } =
+    useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login", { replace: true });
     } else if (isLive && isAuthenticated) {
-      navigate("/room/1231", { replace: true });
+      navigate(`/room/${userInfo?.rooms[0]}`, { replace: true });
+    } else if (isJoined.status && isAuthenticated) {
+      navigate(`/room/${isJoined.roomId}`, { replace: true });
+    } else if (isAuthenticated) {
+      navigate("/room", { replace: true });
     }
-  }, [isAuthenticated, isLive]);
+  }, [isAuthenticated, isLive, isJoined.status]);
 
   if (isAuthLoading) {
     return (

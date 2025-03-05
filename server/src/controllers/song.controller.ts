@@ -9,23 +9,22 @@ import { IUser } from "src/models/user.model";
 import youtubesearchapi from "youtube-search-api";
 import mongoose from "mongoose";
 import { extractYouTubeID } from "src/utils/extractYoutubeId";
-import { addSongSchema } from "src/schema/addSongSchema";
+import { extractedSongSchema } from "src/schema/addSongSchema";
+
+// TODO idkk relalted to add song or something
 
 const addSong = asyncHandler(async (req, res) => {
-  const { streamId } = req.params;
+  const { roomId } = req.params;
   const { url } = req.body;
 
   try {
-    if (!mongoose.isValidObjectId(streamId)) {
+    if (!mongoose.isValidObjectId(roomId)) {
       throw new ApiError(400, "Invalid stream ID");
     }
 
-    // TODO add check for youtube and soundcloud
-    // Handle add song for souncloud
+    const room = await Room.findById(roomId);
 
-    const stream = await Room.findById(streamId);
-
-    if (!stream) {
+    if (!room) {
       throw new ApiError(404, "Room not found");
     }
 
@@ -42,33 +41,36 @@ const addSong = asyncHandler(async (req, res) => {
       thumbnail: { thumbnails },
     } = await youtubesearchapi.GetVideoDetails(extractedId);
 
-    const validatedData = addSongSchema.parse({
+    const validatedData = extractedSongSchema.parse({
       externalId: id,
       title,
-      source: stream.roomType,
+      source: room.roomType,
       artist: channel,
       coverImageUrl: thumbnails[thumbnails.length - 1].url,
-      stream: streamId,
+      room: roomId,
     });
 
     const song = await Song.create(validatedData);
+    const filteredSong = await Song.findById(song._id)
+      .select("-createdAt -updatedAt -__v")
+      .lean();
 
-    if (!song) {
+    if (!filteredSong) {
       throw new ApiError(500, "Something went wrong while adding song");
     }
 
     let updateQuery;
-    if (!stream.currentSong && stream.songQueue.length === 0) {
-      updateQuery = { currentSong: song };
+    if (!room.currentSong && room.songQueue.length === 0) {
+      updateQuery = { currentSong: filteredSong };
     } else {
-      updateQuery = { $push: { songQueue: song } };
+      updateQuery = { $push: { songQueue: filteredSong } };
     }
 
-    const updatedStream = await Room.findByIdAndUpdate(streamId, updateQuery, {
+    const updatedRoom = await Room.findByIdAndUpdate(roomId, updateQuery, {
       new: true,
     });
 
-    if (!updatedStream) {
+    if (!updatedRoom) {
       throw new ApiError(
         400,
         "Something went wrong while adding strong the room"
@@ -77,9 +79,10 @@ const addSong = asyncHandler(async (req, res) => {
 
     return res
       .status(201)
-      .json(new ApiResponse(201, song, "Added song successfully"));
+      .json(new ApiResponse(201, filteredSong, "Added song successfully"));
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log(error);
       throw new ApiError(
         400,
         error.errors.map((err) => err.message).join(", ")
@@ -147,4 +150,4 @@ const downVoteSong = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Song downvoted successfully"));
 });
 
-export { addSong, upVoteSong, downVoteSong };
+export { upVoteSong, downVoteSong };

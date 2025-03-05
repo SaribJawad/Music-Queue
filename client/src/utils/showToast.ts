@@ -1,6 +1,9 @@
 import toast from "react-hot-toast";
 
-export const showToast = (type: "success" | "error", message: string) => {
+export const showToast = (
+  type: "success" | "error" | "emoji",
+  message: string
+) => {
   const theme = localStorage.getItem("theme");
   const style =
     theme === "dark"
@@ -11,8 +14,13 @@ export const showToast = (type: "success" | "error", message: string) => {
     toast.success(message, {
       style,
     });
-  } else {
+  } else if (type === "error") {
     toast.error(message, {
+      style,
+    });
+  } else {
+    toast(message, {
+      icon: "👋",
       style,
     });
   }

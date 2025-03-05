@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { api } from "../config/axios";
 import { z } from "zod";
 import { UserSchema } from "../schemas/userSchema";
@@ -33,6 +34,7 @@ export const useGetUser = () => {
         const parsedData = GetUserResponseSchema.parse(response.data);
 
         dispatch(setAuthSuccess(parsedData.data));
+
         return parsedData;
       } catch (error) {
         let errorMessage = "Something went wrong getting user data";

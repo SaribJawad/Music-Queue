@@ -4,19 +4,19 @@ import { useEffect } from "react";
 import LoadingBar from "../component/ui/LoadingBar";
 
 function PublicRoutes() {
-  const { isAuthenticated, isLive, isAuthLoading } = useAppSelector(
-    (state) => state.auth
-  );
-
+  const { isAuthenticated, isLive, isAuthLoading, userInfo, isJoined } =
+    useAppSelector((state) => state.auth);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated && !isLive) {
+    if (isAuthenticated) {
       navigate("/room", { replace: true });
-    } else if (isLive) {
-      navigate("/room/1231", { replace: true });
+    } else if (isLive && isAuthenticated) {
+      navigate(`/room/${userInfo?.rooms[0]}`, { replace: true });
+    } else if (isJoined.status && isAuthenticated) {
+      navigate(`/room/${isJoined.roomId}`, { replace: true });
     }
-  }, [isAuthenticated, isLive]);
+  }, [isAuthenticated, isLive, isJoined.status]);
 
   if (isAuthLoading) {
     return (

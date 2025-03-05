@@ -7,8 +7,19 @@ import React, {
   useCallback,
 } from "react";
 import { ServerMessageSchema } from "../schemas/webSocketServerMessage";
-import { useAppDispatch } from "../app/hook";
+import { useAppDispatch, useAppSelector } from "../app/hook";
 import { addRoom } from "../features/room/room.slice";
+import {
+  setUserIsJoinedLive,
+  setUserIsLive,
+} from "../features/auth/auth.slice";
+import { updateSongQueue } from "../features/song/song.slice";
+import {
+  selectLiveRoom,
+  setCurrentSong,
+} from "../features/liveRoom/liveRoom.slice";
+import { showToast } from "../utils/showToast";
+import { useNavigate } from "react-router-dom";
 
 interface WebSocketContextType {
   sendMessage: (payload: any, action: string) => boolean;
@@ -25,13 +36,16 @@ export const WebSocketProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const liveRoom = useAppSelector(selectLiveRoom);
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   const sendMessage = useCallback((payload: any, action: string): boolean => {
+    console.log("sendMessage", payload, action);
     if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ payload, action }));
+      socketRef.current.send(JSON.stringify({ action, payload }));
       return true;
     }
     return false;
@@ -53,9 +67,35 @@ export const WebSocketProvider = ({
 
       switch (parsedServerMessage.data?.action) {
         case "CREATE_ROOM":
+          dispatch(setUserIsLive(parsedServerMessage.data.payload._id));
+          break;
+
+        case "ADD_ROOM":
           dispatch(addRoom(parsedServerMessage.data.payload));
           break;
 
+        case "ADD_SONG":
+          if (liveRoom?.currentSong !== null) {
+            dispatch(updateSongQueue(parsedServerMessage.data.payload));
+          } else {
+            dispatch(setCurrentSong(parsedServerMessage.data.payload));
+          }
+          break;
+
+        case "JOIN_ROOM":
+          dispatch(setUserIsJoinedLive(parsedServerMessage.data.payload));
+          navigate(`/room/${parsedServerMessage.data.payload}`, {
+            replace: true,
+          });
+          break;
+
+        case "USER_JOINED":
+          showToast("emoji", parsedServerMessage.data.payload);
+          break;
+
+        case "ERROR":
+          showToast("error", parsedServerMessage.data.payload);
+          break;
         default:
           break;
       }

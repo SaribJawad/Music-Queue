@@ -5,53 +5,6 @@ import { ApiResponse } from "src/utils/ApiResponse";
 import { ApiError } from "src/utils/ApiError";
 import { IUser, User } from "src/models/user.model";
 import { ISong, Song } from "src/models/song.model";
-import { z } from "zod";
-
-// export const CreateRoomSchema = z.object({
-//   roomType: z.enum(["youtube", "soundcloud"], {
-//     errorMap: () => ({
-//       message: "Room type is required",
-//     }),
-//   }),
-//   roomName: z.string({ required_error: "Room name is required" }),
-//   roomPassword: z.string({ required_error: "Room password is required" }),
-// });
-
-// const createRoom = asyncHandler(async (req, res) => {
-//   const { roomType, roomName, roomPassword } = req.body;
-
-//   const parsedBody = CreateRoomSchema.safeParse(req.body);
-
-//   if (!parsedBody.success) {
-//     throw new ApiError(
-//       401,
-//       parsedBody.error.errors.map((err) => err.message).join(", ")
-//     );
-//   }
-
-//   const { _id: userId } = req.user as IUser;
-
-//   const room = await Room.create({
-//     roomType,
-//     roomName,
-//     roomPassword,
-//     owner: userId,
-//   });
-
-//   if (!room) {
-//     throw new ApiError(500, "Something went wrong while creating room");
-//   }
-
-//   await User.findByIdAndUpdate(userId, { isAlive: true });
-
-//   await User.findByIdAndUpdate(userId, {
-//     $push: { streams: room },
-//   });
-
-//   return res
-//     .status(201)
-//     .json(new ApiResponse(201, room, "Room created successfully"));
-// });
 
 const getAllRooms = asyncHandler(async (req, res) => {
   try {
@@ -81,6 +34,7 @@ const getAllRooms = asyncHandler(async (req, res) => {
             email: 1,
             avatar: 1,
           },
+          users: 1,
         },
       },
     ]);
@@ -135,26 +89,28 @@ const getRoom = asyncHandler(async (req, res) => {
         as: "currentSong",
       },
     },
-    {
-      $addFields: {
-        currentSong: { $first: "$currentSong" },
-      },
-    },
+
     {
       $addFields: {
         owner: { $first: "$owner" },
+        currentSong: {
+          $ifNull: [{ $first: "$currentSong" }, null],
+        },
       },
     },
     {
       $project: {
-        songQueue: 1,
+        roomName: 1,
+        roomType: 1,
         owner: {
           _id: 1,
           name: 1,
           avatar: 1,
+          email: 1,
         },
         streamType: 1,
         currentSong: 1,
+        users: 1,
       },
     },
   ]);
@@ -251,7 +207,17 @@ const getSongQueue = asyncHandler(async (req, res) => {
     },
     {
       $project: {
-        songQueue: 1,
+        songQueue: {
+          externalId: 1,
+          title: 1,
+          coverImageUrl: 1,
+          artist: 1,
+          source: 1,
+          vote: 1,
+          noOfVote: 1,
+          room: 1,
+          _id: 1,
+        },
       },
     },
   ]);

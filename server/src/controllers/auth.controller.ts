@@ -1,15 +1,15 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { Profile } from "passport-google-oauth20";
 import { IUser, User } from "src/models/user.model";
 import { ApiError } from "src/utils/ApiError";
 import { ApiResponse } from "src/utils/ApiResponse";
 import { asyncHandler } from "src/utils/asyncHandler";
 import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/config/config";
+import { REFRESH_TOKEN_SECRET } from "src/config/config";
 import { Room } from "src/models/room.model";
 
 const generateAccessAndRefreshToken = async (
-  userId: Types.ObjectId
+  userId: ObjectId
 ): Promise<{ accessToken: string; refreshToken: string }> => {
   try {
     const user = await User.findById(userId);
@@ -59,7 +59,7 @@ const refreshAcccessToken = asyncHandler(async (req, res) => {
     };
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-      new mongoose.Types.ObjectId(user._id)
+      user._id
     );
 
     return res
@@ -95,7 +95,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    new mongoose.Types.ObjectId(user._id)
+    user._id
   );
 
   const options = {

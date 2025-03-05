@@ -15,6 +15,7 @@
   "dependencies": {
     "@types/express-session": "^1.18.1",
     "@types/ws": "^8.5.14",
+    "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { IStream } from "./room.model";
+import { IRoom } from "./room.model";
 
 type Source = "youtube" | "soundcloud";
 
@@ -10,7 +10,7 @@ export interface ISong extends Document {
   source: Source;
   vote: string[];
   noOfVote: number;
-  stream: IStream;
+  room: IRoom;
   artist: string;
 }
 
@@ -50,7 +50,7 @@ const songSchema: Schema<ISong> = new Schema(
       default: 0,
     },
 
-    stream: {
+    room: {
       type: mongoose.Types.ObjectId,
       ref: "Stream",
     },

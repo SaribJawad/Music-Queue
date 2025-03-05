@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import Button from "./Button";
+import { SongType } from "../schemas/songSchema";
 
 // youtube iframe api types
 declare global {
@@ -9,12 +10,18 @@ declare global {
   }
 }
 
-function YoutubeDisplaySection() {
+interface IYoutubeDisplaySectionProps {
+  currentSong: SongType;
+}
+
+function YoutubeDisplaySection({ currentSong }: IYoutubeDisplaySectionProps) {
   const playerContainer = useRef<HTMLDivElement>(null);
   const youtubePlayer = useRef<YT.Player>();
 
   useEffect(() => {
     // loads the IFrame Player API
+    if (!currentSong?.externalId) return;
+
     if (!window.YT) {
       if (document.getElementById("youtube-iframe-script")) return;
       const tag = document.createElement("script");
@@ -29,7 +36,7 @@ function YoutubeDisplaySection() {
     } else {
       initializeYoutubePlayer();
     }
-  }, []);
+  }, [currentSong]);
 
   const initializeYoutubePlayer = () => {
     if (youtubePlayer.current || !playerContainer.current) return;
@@ -37,7 +44,7 @@ function YoutubeDisplaySection() {
     youtubePlayer.current = new window.YT.Player(playerContainer.current!, {
       height: "100%",
       width: "100%",
-      videoId: "1qMt-vSiLhA",
+      videoId: currentSong?.externalId,
       playerVars: {
         autoplay: 1,
         controls: 1,
@@ -62,20 +69,24 @@ function YoutubeDisplaySection() {
         <Button size="sm">Hide timestamps</Button>
       </div>
       <div className="aspect-video xl:aspect-auto xl:h-[90%] w-full">
-        <div
-          ref={playerContainer}
-          id="video-container "
-          className="w-full h-full"
-        ></div>
+        {!currentSong ? (
+          <div className="h-full w-full flex items-center justify-center sm:text-base text-sm">
+            No current song playing right now, Add songs to play!
+          </div>
+        ) : (
+          <div
+            ref={playerContainer}
+            id="video-container "
+            className="w-full h-full"
+          ></div>
+        )}
       </div>
 
       <div className="flex items-center justify-between  h-fit">
         <div className="">
-          <h1 className="md:text-base text-sm">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </h1>
+          <h1 className="md:text-base text-sm">{currentSong?.title}</h1>
           <span className="md:text-sm text-xs text-text_dark_secondary dark:text-zinc-500">
-            Channel name
+            {currentSong?.artist}
           </span>
         </div>
         <Button size="sm" className="flex-shrink-0">
