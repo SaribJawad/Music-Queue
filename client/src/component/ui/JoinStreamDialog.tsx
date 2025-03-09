@@ -5,6 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useWebSocketContext } from "../../contexts/webSocketProvider";
 import { showToast } from "../../utils/showToast";
+import { useAppSelector } from "../../app/hook";
+import { selectUserInfo } from "../../features/auth/auth.slice";
 
 interface CreateStreamDialogProps {
   setIsOpen: (arg: boolean) => void;
@@ -19,6 +21,7 @@ type IFormData = z.infer<typeof FormSchema>;
 
 function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
   const { isConnected, sendMessage } = useWebSocketContext();
+  const loggedInUser = useAppSelector(selectUserInfo);
   const {
     register,
     handleSubmit,
@@ -29,7 +32,7 @@ function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
 
   const onSubmit = (data: IFormData) => {
     const sent = sendMessage(
-      { roomPassword: data.password, roomId },
+      { roomPassword: data.password, roomId, userId: loggedInUser!._id },
       "JOIN_ROOM"
     );
 

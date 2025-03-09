@@ -7,7 +7,7 @@ export const SongSchema = z.object({
   coverImageUrl: z.string(),
   artist: z.string(),
   source: z.string(),
-  vote: z.array(z.string().regex(objectIdRegex)),
+  vote: z.array(z.string().regex(objectIdRegex).optional()),
   noOfVote: z.number(),
   room: z.string().regex(objectIdRegex),
   _id: z.string().regex(objectIdRegex),

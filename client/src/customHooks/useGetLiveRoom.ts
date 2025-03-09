@@ -25,6 +25,7 @@ export const useGetLiveRoom = () => {
     queryFn: async (): Promise<UseGetLiveRoomResponseType> => {
       try {
         const response = await api.get(`/room/${roomId}`);
+
         const parsedResponse = UseGetLiveRoomResponseSchema.safeParse(
           response.data
         );
@@ -52,7 +53,6 @@ export const useGetLiveRoom = () => {
       }
     },
     enabled: !!roomId,
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 };

@@ -4,18 +4,12 @@ import JoinStreamDialog from "./ui/JoinStreamDialog";
 import { useState } from "react";
 
 interface LiveStreamListProps {
-  //   setOpenModal: (arg: boolean) => void;
   roomName: string;
   roomType: string;
   roomId: string;
 }
 
-function LiveStreamList({
-  //   setOpenModal,
-  roomName,
-  roomType,
-  roomId,
-}: LiveStreamListProps) {
+function LiveStreamList({ roomName, roomType, roomId }: LiveStreamListProps) {
   const [isJoinStreamDialogOpen, setIsJoinStreamDialogOpen] =
     useState<boolean>(false);
   return (

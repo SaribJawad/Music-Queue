@@ -3,13 +3,24 @@ import jwt from "jsonwebtoken";
 import * as cookie from "cookie";
 import { WebSocket, WebSocketServer } from "ws";
 import { ACCESS_TOKEN_SECRET } from "src/config/config";
-import RoomService from "src/services/RoomService";
 import {
   handleCreateRoom,
+  handleEndRoom,
   handleJoinRoom,
+  handleLeaveRoom,
   handleRefreshJoinRoom,
 } from "src/handlers/roomHandler";
-import { handleAddSong } from "src/handlers/songHandler";
+import {
+  handleAddSong,
+  handleDeleteSong,
+  handlePlayNextSong,
+  handleUpVoteSong,
+} from "src/handlers/songHandler";
+import { User } from "src/models/user.model";
+import { Room } from "src/models/room.model";
+import { ApiError } from "src/utils/ApiError";
+import { Song } from "src/models/song.model";
+import RoomService from "src/services/RoomService";
 
 export interface ClientMessage {
   action: string;
@@ -25,11 +36,10 @@ interface ServerMessage {
 
 class WebSocketService {
   private wss: WebSocketServer;
-  private userId: string | null;
+  private timeouts: Map<string, NodeJS.Timeout> = new Map();
 
   constructor(server: Server) {
     this.wss = new WebSocketServer({ server });
-    this.userId = null;
     this.wss.on("connection", this.handleConnection.bind(this));
   }
 
@@ -38,22 +48,25 @@ class WebSocketService {
     const accessToken = cookies.accessToken || null;
     try {
       const decodedToken = jwt.verify(accessToken!, ACCESS_TOKEN_SECRET!);
-      this.userId = (decodedToken as jwt.JwtPayload)._id;
+      const id = (decodedToken as jwt.JwtPayload)._id;
+      ws.userId = id;
+
+      if (this.timeouts.has(id)) {
+        clearTimeout(this.timeouts.get(id));
+        this.timeouts.delete(id);
+      }
     } catch (error) {
       ws.close(4401, "Unauthorized");
       return;
     }
 
-    // await RoomService.initializeRooms().catch((err) => {
-    //   console.error("Failed to initialize rooms:", err);
-    // });
-
-    console.log("on intialize", RoomService.rooms);
-
     ws.on("message", (data: ClientMessage) =>
       this.handleMessage(ws, data.toString())
     );
+
     ws.on("error", console.error);
+
+    ws.on("close", () => this.handleClose(ws));
   }
 
   private async handleMessage(ws: WebSocket, data: string) {
@@ -77,6 +90,26 @@ class WebSocketService {
           await handleRefreshJoinRoom({ ws, clientData, wsService: this });
           break;
 
+        case "LEAVE_ROOM":
+          await handleLeaveRoom({ ws, clientData, wsService: this });
+          break;
+
+        case "END_ROOM":
+          await handleEndRoom({ ws, clientData, wsService: this });
+          break;
+
+        case "DELETE_SONG":
+          await handleDeleteSong({ ws, clientData, wsService: this });
+          break;
+
+        case "UPVOTE_SONG":
+          await handleUpVoteSong({ ws, clientData, wsService: this });
+          break;
+
+        case "PLAY_NEXT_SONG":
+          await handlePlayNextSong({ ws, clientData, wsService: this });
+          break;
+
         default:
           break;
       }
@@ -87,7 +120,90 @@ class WebSocketService {
     }
   }
 
+  private async handleClose(ws: WebSocket) {
+    const userId = ws.userId;
+
+    const user = await User.findById(userId);
+
+    const timeout = setTimeout(async () => {
+      if (user?.isAlive) {
+        const room = await Room.findById(user.rooms[0]);
+
+        if (!room) {
+          throw new ApiError(404, "Room not found");
+        }
+        const activeRoomSession = RoomService.rooms.get(String(room._id));
+
+        if (room.songQueue?.length >= 1) {
+          await Song.deleteMany({ _id: { $in: room.songQueue } });
+        }
+        if (room.currentSong) {
+          await Song.findByIdAndDelete(room.currentSong);
+        }
+
+        user.isAlive = false;
+        user.rooms = [];
+        await user.save({ validateBeforeSave: false });
+
+        await Room.findByIdAndDelete(room._id);
+
+        if (room.users?.length) {
+          await User.updateMany(
+            { _id: { $in: room.users } },
+            {
+              $set: {
+                "isJoined.status": false,
+                "isJoined.roomId": null,
+              },
+            }
+          );
+        }
+
+        this.sendMessage(ws, "END_ROOM", room._id);
+        this.sendMessageToEveryoneExceptOwnerInRoom(
+          ws,
+          activeRoomSession!.users,
+          "ROOM_ENDED",
+          room._id
+        );
+        this.broadcast("REMOVE_ROOM", room._id);
+
+        RoomService.rooms.delete(String(room._id));
+      }
+      if (user?.isJoined.status) {
+        const room = await Room.findOne({ users: user._id });
+
+        if (!room) {
+          throw new ApiError(404, "Room not found");
+        }
+
+        const activeRoomSession = RoomService.rooms.get(String(room._id));
+        const connectedClients = activeRoomSession?.users;
+        await Room.updateOne({ _id: room._id }, { $pull: { users: user._id } });
+
+        user.isJoined = { status: false, roomId: null };
+        await user.save({ validateBeforeSave: false });
+
+        this.sendMessageToEveryoneExpectSenderInRoom(
+          ws,
+          connectedClients!,
+          "LEFT_ROOM",
+          {
+            message: `${user.name} left the room`,
+            noOfJoinedUsers: connectedClients?.size,
+          }
+        );
+
+        this.sendMessage(ws, "LEAVE_ROOM", `${user.name} left the room`);
+        RoomService.rooms.get(String(room._id))?.users.delete(ws);
+      }
+    }, 10000);
+
+    this.timeouts.set(userId!, timeout);
+  }
+
   // send to all
+
   public broadcast(action: string, payload?: any) {
     const message: ServerMessage = { action, payload };
 
@@ -137,7 +253,7 @@ class WebSocketService {
   // send to everyone in room except sender
   public sendMessageToEveryoneExpectSenderInRoom(
     ws: WebSocket,
-    roomUsers: WebSocket[],
+    roomUsers: WebSocket[] | Set<WebSocket>,
     action: string,
     payload?: any
   ) {

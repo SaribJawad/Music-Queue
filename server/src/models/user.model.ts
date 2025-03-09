@@ -16,7 +16,7 @@ export interface IUser extends Document {
   avatar?: string;
   rooms: IRoom[];
   isAlive: boolean;
-  isJoined: { status: boolean; roomId: ObjectId };
+  isJoined: { status: boolean; roomId: ObjectId | null };
   refreshToken?: string;
   generateAccessToken: () => string;
   generateRefreshToken: () => string;

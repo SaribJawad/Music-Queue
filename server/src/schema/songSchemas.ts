@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const objectIdRegex = /^[a-f\d]{24}$/i;
+export const objectIdRegex = /^[a-f\d]{24}$/i;
 const youtubeRegex =
   /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+(&.*)?$/;
 
@@ -17,3 +17,14 @@ export const AddSongSchema = z.object({
   songUrl: z.string().regex(youtubeRegex),
   roomId: z.string().regex(objectIdRegex),
 });
+
+export const DeleteSongSchema = z.object({
+  roomId: z.string().regex(objectIdRegex),
+  songId: z.string().regex(objectIdRegex),
+});
+
+export const UpVoteSongSchema = DeleteSongSchema.extend({
+  userId: z.string().regex(objectIdRegex),
+});
+
+export const PlayNextSongSchema = DeleteSongSchema;

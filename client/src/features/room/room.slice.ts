@@ -20,10 +20,15 @@ export const roomSlice = createSlice({
     addRoom: (state, action: PayloadAction<RoomType>) => {
       state.allRooms.push(action.payload);
     },
+    removeRoom: (state, action: PayloadAction<string>) => {
+      state.allRooms = state.allRooms.filter(
+        (room) => room._id !== action.payload
+      );
+    },
   },
 });
 
-export const { setAllRooms, addRoom } = roomSlice.actions;
+export const { setAllRooms, addRoom, removeRoom } = roomSlice.actions;
 export default roomSlice.reducer;
 
 // selectors

@@ -9,7 +9,7 @@ import { IUser } from "src/models/user.model";
 import youtubesearchapi from "youtube-search-api";
 import mongoose from "mongoose";
 import { extractYouTubeID } from "src/utils/extractYoutubeId";
-import { extractedSongSchema } from "src/schema/addSongSchema";
+import { extractedSongSchema } from "src/schema/songSchemas";
 
 // TODO idkk relalted to add song or something
 

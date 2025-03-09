@@ -15,6 +15,7 @@ export const CreateRoomSchema = z.object({
 export const JoinRoomSchema = z.object({
   roomId: z.string().regex(objectIdRegex),
   roomPassword: z.string().optional(),
+  userId: z.string().regex(objectIdRegex),
 });
 
 export const RefreshJoinRoomSchema = z.object({

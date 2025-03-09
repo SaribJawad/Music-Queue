@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IRoom } from "./room.model";
 
 type Source = "youtube" | "soundcloud";
@@ -8,7 +8,7 @@ export interface ISong extends Document {
   title: string;
   coverImageUrl: string;
   source: Source;
-  vote: string[];
+  vote: Types.ObjectId[];
   noOfVote: number;
   room: IRoom;
   artist: string;
@@ -38,13 +38,10 @@ const songSchema: Schema<ISong> = new Schema(
       enum: ["youtube", "soundcloud"],
       required: true,
     },
-    vote: [
-      {
-        type: String,
-        required: true,
-        default: [],
-      },
-    ],
+    vote: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      default: [],
+    },
     noOfVote: {
       type: Number,
       default: 0,

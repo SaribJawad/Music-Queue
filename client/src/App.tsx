@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import LandingPage from "./page/LandingPage";
 import LoginPage from "./page/LoginPage";
-import LiveStreamPage from "./page/LiveStreamPage";
 import NotFoundPage from "./page/NotFoundPage";
 import PrivateRoutes from "./routes/PrivateRoutes";
 import PublicRoutes from "./routes/PublicRoutes";
@@ -10,6 +9,7 @@ import RoomPage from "./page/RoomPage";
 import { useGetUser } from "./customHooks/useGetUser";
 import LoadingBar from "./component/ui/LoadingBar";
 import WebSocketRoutes from "./routes/WebSocketRoutes";
+import LiveRoomPage from "./page/LiveRoomPage";
 
 function App() {
   const { isLoading } = useGetUser();
@@ -33,7 +33,7 @@ function App() {
         <Route element={<PrivateRoutes />}>
           <Route element={<WebSocketRoutes />}>
             <Route path="/room" element={<RoomPage />} />
-            <Route path="/room/:roomId" element={<LiveStreamPage />} />
+            <Route path="/room/:roomId" element={<LiveRoomPage />} />
           </Route>
         </Route>
 

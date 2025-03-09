@@ -3,11 +3,12 @@ import Button from "../Button";
 
 interface DialogProps {
   closeDialog: () => void;
+  onClickBtn: () => void;
   title: string;
   btnContent: string;
 }
 
-function Dialog({ closeDialog, btnContent, title }: DialogProps) {
+function Dialog({ closeDialog, btnContent, title, onClickBtn }: DialogProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -26,12 +27,12 @@ function Dialog({ closeDialog, btnContent, title }: DialogProps) {
         onClick={(e) => e.stopPropagation()}
         className="z-10 dark:bg-background_dark bg-background_light  rounded-md p-6 flex flex-col gap-3"
       >
-        <h1>{title}</h1>
+        <h1 className="md:text-base sm:text-sm text-xs">{title}</h1>
         <div className="flex justify-center gap-3">
           <Button onClick={() => closeDialog()} type="button" size="sm">
             Cancel
           </Button>
-          <Button onClick={() => closeDialog()} type="button" size="sm">
+          <Button onClick={() => onClickBtn()} type="button" size="sm">
             {btnContent}
           </Button>
         </div>

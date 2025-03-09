@@ -62,6 +62,19 @@ export const authSlice = createSlice({
       state.isJoined.status = true;
       state.isJoined.roomId = action.payload;
     },
+    setUserLeaveRoom: (state) => {
+      state.isJoined.status = false;
+      state.isJoined.roomId = null;
+    },
+    setUserEndRoom: (state, action: PayloadAction<string>) => {
+      state.isLive = false;
+      state.userInfo = {
+        ...state.userInfo!,
+        rooms: state.userInfo?.rooms?.filter(
+          (room) => room !== action.payload
+        )!,
+      };
+    },
   },
 });
 
@@ -71,6 +84,8 @@ export const {
   setAuthFailure,
   setUserIsLive,
   setUserIsJoinedLive,
+  setUserLeaveRoom,
+  setUserEndRoom,
 } = authSlice.actions;
 
 export default authSlice.reducer;

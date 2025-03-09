@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import Button from "./Button";
 import { SongType } from "../schemas/songSchema";
+import { useWebSocketContext } from "../contexts/webSocketProvider";
+import { showToast } from "../utils/showToast";
+import { useAppSelector } from "../app/hook";
+import { selectSongQueue } from "../features/song/song.slice";
+import { useParams } from "react-router-dom";
+import { FaUser } from "react-icons/fa6";
+import { selectNoOfJoinedUser } from "../features/liveRoom/liveRoom.slice";
 
 // youtube iframe api types
 declare global {
@@ -12,17 +19,27 @@ declare global {
 
 interface IYoutubeDisplaySectionProps {
   currentSong: SongType;
+  isAdmin: boolean;
 }
 
-function YoutubeDisplaySection({ currentSong }: IYoutubeDisplaySectionProps) {
+function YoutubeDisplaySection({
+  currentSong,
+  isAdmin,
+}: IYoutubeDisplaySectionProps) {
   const playerContainer = useRef<HTMLDivElement>(null);
   const youtubePlayer = useRef<YT.Player>();
+  const songsQueue = useAppSelector(selectSongQueue);
+  const noOfJoinedUser = useAppSelector(selectNoOfJoinedUser);
+  const { isConnected, sendMessage } = useWebSocketContext();
+  const { roomId } = useParams();
 
   useEffect(() => {
     // loads the IFrame Player API
     if (!currentSong?.externalId) return;
 
-    if (!window.YT) {
+    if (youtubePlayer.current) {
+      youtubePlayer.current.loadVideoById(currentSong.externalId);
+    } else if (!window.YT) {
       if (document.getElementById("youtube-iframe-script")) return;
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
@@ -53,20 +70,48 @@ function YoutubeDisplaySection({ currentSong }: IYoutubeDisplaySectionProps) {
         onReady: () => {
           console.log("onPlayerReady");
         },
-        onStateChange: () => {
+        onStateChange: (e) => {
+          console.log(e);
           console.log("onPlayerStateChange");
         },
       },
     });
   };
 
+  const handlePlayNext = () => {
+    if (songsQueue.length <= 0) {
+      return showToast("error", "No songs currently in queue.");
+    }
+    const sent = sendMessage(
+      { songId: songsQueue[0]._id, roomId },
+      "PLAY_NEXT_SONG"
+    );
+    if (sent) {
+      return;
+    } else if (isConnected) {
+      console.warn(
+        "Failed to send message even though connection is established"
+      );
+    } else {
+      showToast("error", "Something went wrong! Try again.");
+    }
+  };
+
   return (
     <section className=" xl:flex-1  flex flex-col gap-3">
       {/* stream buttons */}
-      <div className="flex items-center gap-2 justify-end">
-        <Button size="sm">Sync All</Button>
-        <Button size="sm">Sync To</Button>
-        <Button size="sm">Hide timestamps</Button>
+      <div className="flex items-center justify-between">
+        <div className="text-sm flex items-center gap-2 justify-center">
+          <FaUser />
+          <span>{noOfJoinedUser}</span>
+        </div>
+        {isAdmin && (
+          <div className="flex items-center gap-2 justify-end">
+            <Button size="sm">Sync All</Button>
+            <Button size="sm">Sync To</Button>
+            <Button size="sm">Hide timestamps</Button>
+          </div>
+        )}
       </div>
       <div className="aspect-video xl:aspect-auto xl:h-[90%] w-full">
         {!currentSong ? (
@@ -89,9 +134,11 @@ function YoutubeDisplaySection({ currentSong }: IYoutubeDisplaySectionProps) {
             {currentSong?.artist}
           </span>
         </div>
-        <Button size="sm" className="flex-shrink-0">
-          Play next
-        </Button>
+        {isAdmin && (
+          <Button onClick={handlePlayNext} size="sm" className="flex-shrink-0">
+            Play next
+          </Button>
+        )}
       </div>
     </section>
   );

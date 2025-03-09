@@ -20,7 +20,7 @@ type SongQueueResponseType = z.infer<typeof GetSongQueueResponseSchema>;
 export const useGetSongQueue = () => {
   const dispatch = useAppDispatch();
   const { roomId } = useParams();
-  //   console.log(roomId);
+
   return useQuery<SongQueueResponseType, ErrorType>({
     queryKey: ["songQueue"],
     queryFn: async (): Promise<SongQueueResponseType> => {
@@ -44,7 +44,6 @@ export const useGetSongQueue = () => {
       }
     },
     enabled: !!roomId,
-    refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
 };
