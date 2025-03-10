@@ -63,7 +63,7 @@ function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
         exit={{ opacity: 0, scale: 0 }}
         transition={{ ease: "backInOut" }}
         onClick={(e) => e.stopPropagation()}
-        className="z-10"
+        className="z-10 dark:border dark:border-zinc-800 rounded-lg"
       >
         <form
           onSubmit={handleSubmit(onSubmit)}

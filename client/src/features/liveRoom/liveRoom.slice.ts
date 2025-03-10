@@ -7,12 +7,20 @@ interface ILiveRoomState {
   liveRoom: LiveRoomType | undefined;
   roomType: "youtube" | "soundcloud" | undefined;
   noOfJoinedUsers: number;
+  playerStatus: {
+    status: 1 | 2;
+    timestamps: number;
+  };
 }
 
 const initialState: ILiveRoomState = {
   liveRoom: undefined,
   roomType: undefined,
   noOfJoinedUsers: 0,
+  playerStatus: {
+    status: 2,
+    timestamps: 0,
+  },
 };
 
 export const liveRoomState = createSlice({
@@ -23,7 +31,7 @@ export const liveRoomState = createSlice({
       state.liveRoom = action.payload;
       state.roomType = action.payload.roomType;
     },
-    setCurrentSong: (state, action: PayloadAction<SongType>) => {
+    setCurrentSong: (state, action: PayloadAction<SongType | null>) => {
       state.liveRoom!.currentSong = action.payload;
     },
     setRemoveLiveRoom: (state) => {
@@ -31,6 +39,12 @@ export const liveRoomState = createSlice({
     },
     setNoOfJoinedUsers: (state, action: PayloadAction<number>) => {
       state.noOfJoinedUsers = action.payload;
+    },
+    setPlayerStatus: (
+      state,
+      action: PayloadAction<{ status: 1 | 2; timestamps: number }>
+    ) => {
+      state.playerStatus = action.payload;
     },
   },
 });
@@ -40,6 +54,7 @@ export const {
   setCurrentSong,
   setRemoveLiveRoom,
   setNoOfJoinedUsers,
+  setPlayerStatus,
 } = liveRoomState.actions;
 export default liveRoomState.reducer;
 
@@ -56,4 +71,7 @@ export const selectRoomType = (state: RootState) => {
 };
 export const selectNoOfJoinedUser = (state: RootState) => {
   return state.liveRoom.noOfJoinedUsers;
+};
+export const selectPlayerStatus = (state: RootState) => {
+  return state.liveRoom.playerStatus;
 };

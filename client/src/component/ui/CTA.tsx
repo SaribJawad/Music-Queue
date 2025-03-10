@@ -1,6 +1,3 @@
-import { Link } from "react-router-dom";
-import Button from "../Button";
-
 function CTA() {
   return (
     <section className="bg-background_light_secondary dark:bg-background_blue w-full   text-center py-20 px-5">
@@ -12,9 +9,6 @@ function CTA() {
           Join MusicStream today and experience a new way of sharing and
           enjoying music with friends.
         </p>
-        <Link className="self-center" to="/auth">
-          <Button>Get Started For Free</Button>
-        </Link>
       </div>
     </section>
   );

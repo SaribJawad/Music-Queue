@@ -65,7 +65,7 @@ function CreateRoomSection() {
               setRoomType(provider.name as "youtube" | "soundcloud");
             }}
             key={provider.name}
-            className="flex    dark:bg-background_dark flex-col rounded-lg  items-center  p-4 sm:p-10 hover:rounded-none transition-all duration-300 bg-background_light"
+            className="flex    dark:bg-background_blue flex-col rounded-lg  items-center  p-4 sm:p-10 hover:rounded-none transition-all duration-300 bg-background_light_secondary"
           >
             <h3 className="md:text-base dark:text-text_dark text-text_light text-sm capitalize">
               {provider.name}

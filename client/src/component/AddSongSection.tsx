@@ -64,7 +64,7 @@ function AddSongSection() {
             {...register("songUrl")}
             placeholder="Paste the URL here!"
             type="text"
-            className="w-full p-2 outline-none rounded-md bg-background_light dark:bg-background_dark text-sm"
+            className="w-full p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary text-sm"
           />
         </div>
         <Button type="submit" size="sm" className="flex-shrink-0">

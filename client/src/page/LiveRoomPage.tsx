@@ -51,7 +51,7 @@ function LiveRoomPage() {
         username={liveRoom?.owner.name}
         isAdmin={isAdmin}
       />
-      <section className="flex-1 rounded-md xl:flex-row flex-col dark:bg-background_dark_secondary bg-background_light_secondary sm:p-5 p-3 flex gap-3">
+      <section className="flex-1 rounded-md xl:flex-row flex-col dark:bg-background_dark bg-background_light sm:p-5 p-3 flex gap-3">
         <YoutubeDisplaySection
           currentSong={liveRoom?.currentSong!}
           isAdmin={isAdmin}

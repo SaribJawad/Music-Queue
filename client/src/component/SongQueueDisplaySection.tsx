@@ -24,8 +24,7 @@ function SongQueueDisplaySection() {
           <AddSongSection />
           <section className="flex-1 min-h-0 overflow-y-auto">
             <motion.div
-              className="flex flex-col gap-3 xl:max-h-[0px] max-h-[400px]   "
-              //   className="flex flex-col gap-3 xl:max-h-[600px] transition-max-height duration-500 ease-in-out max-h-[400px]  overflow-hidden "
+              className="flex flex-col gap-3 xl:max-h-[0px] max-h-[400px]  xl:overflow-visible overflow-hidden "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}

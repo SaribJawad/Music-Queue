@@ -44,7 +44,7 @@ const CreateStreamDialog = ({
       onClick={() => {
         setIsOpen(false);
       }}
-      className="absolute top-1/2 left-1/2 transform -translate-x-1/2  -translate-y-1/2 h-full   flex items-center justify-center bg-[#0000007e]  z-1 w-full"
+      className="absolute top-1/2 left-1/2 transform -translate-x-1/2  -translate-y-1/2 h-full   flex items-center justify-center bg-[#0000007e]  z-1 w-full  "
     >
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
@@ -56,7 +56,7 @@ const CreateStreamDialog = ({
       >
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4 p-6 dark:bg-background_dark bg-background_light  rounded-md  "
+          className="flex flex-col gap-4 p-6 dark:bg-background_dark bg-background_light  rounded-md  dark:border dark:border-zinc-800"
         >
           <div>
             <label className=" text-sm font-medium">Room Name</label>

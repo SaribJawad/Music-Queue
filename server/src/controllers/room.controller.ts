@@ -3,8 +3,6 @@ import { IRoom, Room } from "src/models/room.model";
 import { asyncHandler } from "src/utils/asyncHandler";
 import { ApiResponse } from "src/utils/ApiResponse";
 import { ApiError } from "src/utils/ApiError";
-import { IUser, User } from "src/models/user.model";
-import { ISong, Song } from "src/models/song.model";
 
 const getAllRooms = asyncHandler(async (req, res) => {
   try {
@@ -124,56 +122,6 @@ const getRoom = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, room[0], "Room fetch successfully"));
 });
 
-const endRoom = asyncHandler(async (req, res) => {
-  const { roomId } = req.params;
-  const { _id: userId } = req.user as IUser;
-
-  if (!mongoose.isValidObjectId(roomId)) {
-    throw new ApiError(400, "Invalid Room ID");
-  }
-
-  const room = await Room.findById(roomId);
-
-  if (!room) {
-    throw new ApiError(400, "Room not found");
-  }
-
-  if (room.songQueue.length > 0) {
-    await Song.deleteMany({ _id: { $in: room.songQueue } });
-  }
-
-  await Room.findByIdAndDelete(roomId);
-
-  await User.findByIdAndUpdate(userId, {
-    isAlive: false,
-    $pull: { streams: roomId },
-  });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Room ended successfully"));
-});
-
-const clearSongQueue = asyncHandler(async (req, res) => {
-  const { roomId } = req.params;
-
-  if (!mongoose.isValidObjectId(roomId)) {
-    throw new ApiError(400, "Invalide room ID");
-  }
-
-  const room = await Room.findById(roomId);
-
-  if (!room) {
-    throw new ApiError(400, "Room not found");
-  }
-
-  await Song.deleteMany({ _id: { $in: room.songQueue } });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, room, "Cleared song queue successfully"));
-});
-
 const getSongQueue = asyncHandler(async (req, res) => {
   const { roomId } = req.params;
 
@@ -233,105 +181,4 @@ const getSongQueue = asyncHandler(async (req, res) => {
     );
 });
 
-const playNextSong = asyncHandler(async (req, res) => {
-  const { roomId } = req.params;
-  if (!mongoose.isValidObjectId(roomId)) {
-    throw new ApiError(400, "Invalid room ID");
-  }
-
-  const roomData = await Room.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(roomId),
-      },
-    },
-    {
-      $lookup: {
-        from: "songs",
-        localField: "songQueue",
-        foreignField: "_id",
-        as: "songQueue",
-      },
-    },
-
-    {
-      $project: {
-        songQueue: 1,
-        owner: 1,
-        currentSong: 1,
-        streamType: 1,
-      },
-    },
-  ]);
-
-  if (!roomData[0]) {
-    throw new ApiError(400, "Room not found");
-  }
-
-  const room = roomData[0];
-  if (!room) {
-    return res
-      .status(200)
-      .json(new ApiResponse(200, {}, "No songs currently in queue"));
-  }
-
-  const sortedQueue = room.songQueue.sort(
-    (a: ISong, b: ISong) => b.noOfVote - a.noOfVote
-  );
-
-  const nextSong = sortedQueue[0];
-
-  await Room.findByIdAndUpdate(roomId, {
-    currentSong: nextSong,
-    $pull: { songQueue: nextSong._id },
-  });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, nextSong, "Next song is playing"));
-});
-
-const removeSongFromQueue = asyncHandler(async (req, res) => {
-  const { roomId } = req.params;
-  const { songId } = req.body;
-
-  if (!mongoose.isValidObjectId(roomId)) {
-    throw new ApiError(400, "Invalid room ID");
-  }
-
-  if (!mongoose.isValidObjectId(songId)) {
-    throw new ApiError(400, "Invalid song ID");
-  }
-
-  const room = await Room.findByIdAndUpdate(
-    roomId,
-    {
-      $pull: { songQueue: songId },
-    },
-    { new: true }
-  );
-
-  if (!room) {
-    throw new ApiError(404, "Room not found");
-  }
-
-  const songExists = room.songQueue.includes(songId);
-  if (songExists) {
-    await Song.findByIdAndDelete(songId);
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, room, "Song removed from queue"));
-});
-
-export {
-  //   createRoom,
-  endRoom,
-  clearSongQueue,
-  playNextSong,
-  removeSongFromQueue,
-  getRoom,
-  getSongQueue,
-  getAllRooms,
-};
+export { getRoom, getSongQueue, getAllRooms };

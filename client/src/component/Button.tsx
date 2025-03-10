@@ -16,7 +16,7 @@ function Button({
   type,
 }: ButtonProps) {
   const baseStyles =
-    "border rounded-md dark:border-text_dark border-text_light hover:border-text_dark_secondary  hover:dark:bg-text_dark  hover:bg-text_dark_secondary hover:rounded-none  hover:dark:text-black  hover:text-white transition-all duration-300";
+    "border rounded-md border-text_dark_secondary  hover:border-text_light hover:dark:bg-text_dark bg-text_dark_secondary  hover:bg-background_light hover:rounded-none  hover:dark:text-black  hover:text-text_light text-white transition-all duration-300 ";
   const sizeStyles = {
     sm: "sm:px-2 px-1 py-1  sm:text-sm text-xs",
     md: "px-4 py-2 text-base",

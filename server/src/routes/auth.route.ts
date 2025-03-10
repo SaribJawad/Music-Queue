@@ -21,7 +21,7 @@ router.get(
   passport.authenticate("google", { session: false }),
   handleGoogleLogin
 );
-router.get("/google/logout", verifyJWT, handelGoogleLogout);
+router.post("/google/logout", verifyJWT, handelGoogleLogout);
 router.get("/get-user", verifyJWT, getUserInfo);
 
 export default router;

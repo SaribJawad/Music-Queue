@@ -139,7 +139,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(userId).select(
-    "-refreshToken -createdAt -updatedAt -__v"
+    "-refreshToken -createdAt -updatedAt -__v -temporarilyDisconnected -disconnectedAt"
   );
 
   if (!user) {

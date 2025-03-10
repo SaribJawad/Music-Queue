@@ -41,6 +41,17 @@ class WebSocketService {
   constructor(server: Server) {
     this.wss = new WebSocketServer({ server });
     this.wss.on("connection", this.handleConnection.bind(this));
+
+    // setInterval(() => {
+    //   this.wss.clients.forEach((ws) => {
+    //     if (ws.isAlive === false) {
+    //       return ws.terminate();
+    //     }
+
+    //     ws.isAlive = false;
+    //     ws.ping();
+    //   });
+    // }, 30000);
   }
 
   private async handleConnection(ws: WebSocket, req: any) {
@@ -55,6 +66,13 @@ class WebSocketService {
         clearTimeout(this.timeouts.get(id));
         this.timeouts.delete(id);
       }
+
+      await User.findByIdAndUpdate(id, {
+        temporarilyDisconnected: false,
+        disconnectedAt: null,
+      });
+
+      console.log(`User ${id} reconnected, clearing timeout`);
     } catch (error) {
       ws.close(4401, "Unauthorized");
       return;
@@ -106,6 +124,38 @@ class WebSocketService {
           await handleUpVoteSong({ ws, clientData, wsService: this });
           break;
 
+        case "PLAY_VIDEO":
+          const roomIdForPlayVideo = clientData.payload.roomId;
+          const connectedClientForPlay =
+            RoomService.rooms.get(roomIdForPlayVideo);
+          console.log(clientData);
+
+          if (connectedClientForPlay?.users?.size! > 1) {
+            this.sendMessageToEveryoneExpectSenderInRoom(
+              ws,
+              connectedClientForPlay!.users,
+              "PLAY_VIDEO",
+              clientData.payload.timestamps
+            );
+          }
+          break;
+
+        case "PAUSE_VIDEO":
+          const roomIdForPauseVideo = clientData.payload.roomId;
+          const connectedClientForPause =
+            RoomService.rooms.get(roomIdForPauseVideo);
+          console.log(clientData);
+
+          if (connectedClientForPause?.users.size! > 1) {
+            this.sendMessageToEveryoneExpectSenderInRoom(
+              ws,
+              connectedClientForPause!.users,
+              "PAUSE_VIDEO",
+              clientData.payload.timestamps
+            );
+          }
+          break;
+
         case "PLAY_NEXT_SONG":
           await handlePlayNextSong({ ws, clientData, wsService: this });
           break;
@@ -123,83 +173,166 @@ class WebSocketService {
   private async handleClose(ws: WebSocket) {
     const userId = ws.userId;
 
-    const user = await User.findById(userId);
+    const disconnectTime = Date.now();
 
+    // Check if user is already trying to reconnect
+    if (this.timeouts.has(userId!)) {
+      clearTimeout(this.timeouts.get(userId!));
+      this.timeouts.delete(userId!);
+    }
+
+    // temp disconnected
+    try {
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            temporarilyDisconnected: true,
+            disconnectedAt: disconnectTime,
+          },
+        },
+        { new: true }
+      );
+    } catch (error) {
+      console.error("Failed to update user disconnection status:", error);
+    }
+
+    // const user = await User.findById(userId);
     const timeout = setTimeout(async () => {
-      if (user?.isAlive) {
-        const room = await Room.findById(user.rooms[0]);
+      try {
+        const user = await User.findById(userId);
 
-        if (!room) {
-          throw new ApiError(404, "Room not found");
-        }
-        const activeRoomSession = RoomService.rooms.get(String(room._id));
+        if (!user) return;
 
-        if (room.songQueue?.length >= 1) {
-          await Song.deleteMany({ _id: { $in: room.songQueue } });
-        }
-        if (room.currentSong) {
-          await Song.findByIdAndDelete(room.currentSong);
-        }
-
-        user.isAlive = false;
-        user.rooms = [];
-        await user.save({ validateBeforeSave: false });
-
-        await Room.findByIdAndDelete(room._id);
-
-        if (room.users?.length) {
-          await User.updateMany(
-            { _id: { $in: room.users } },
-            {
-              $set: {
-                "isJoined.status": false,
-                "isJoined.roomId": null,
-              },
-            }
-          );
-        }
-
-        this.sendMessage(ws, "END_ROOM", room._id);
-        this.sendMessageToEveryoneExceptOwnerInRoom(
-          ws,
-          activeRoomSession!.users,
-          "ROOM_ENDED",
-          room._id
+        const isActiveElsewhere = await this.checkUserActiveInOtherSessions(
+          String(user._id)
         );
-        this.broadcast("REMOVE_ROOM", room._id);
 
-        RoomService.rooms.delete(String(room._id));
-      }
-      if (user?.isJoined.status) {
-        const room = await Room.findOne({ users: user._id });
-
-        if (!room) {
-          throw new ApiError(404, "Room not found");
+        if (isActiveElsewhere) {
+          user.temporarilyDisconnected = false;
+          user.disconnectedAt = null;
+          await user.save({ validateBeforeSave: false });
+          return;
         }
 
-        const activeRoomSession = RoomService.rooms.get(String(room._id));
-        const connectedClients = activeRoomSession?.users;
-        await Room.updateOne({ _id: room._id }, { $pull: { users: user._id } });
+        if (user?.isAlive) {
+          const room = await Room.findById(user.rooms[0]);
 
-        user.isJoined = { status: false, roomId: null };
-        await user.save({ validateBeforeSave: false });
+          //   if (!room) {
+          //     throw new ApiError(404, "Room not found");
+          //   }
+          if (!room) return;
 
-        this.sendMessageToEveryoneExpectSenderInRoom(
-          ws,
-          connectedClients!,
-          "LEFT_ROOM",
-          {
-            message: `${user.name} left the room`,
-            noOfJoinedUsers: connectedClients?.size,
+          const activeRoomSession = RoomService.rooms.get(String(room._id));
+
+          if (room.songQueue?.length >= 1) {
+            await Song.deleteMany({ _id: { $in: room.songQueue } });
           }
-        );
+          if (room.currentSong) {
+            await Song.findByIdAndDelete(room.currentSong);
+          }
 
-        this.sendMessage(ws, "LEAVE_ROOM", `${user.name} left the room`);
-        RoomService.rooms.get(String(room._id))?.users.delete(ws);
+          user.isAlive = false;
+          user.rooms = [];
+          await user.save({ validateBeforeSave: false });
+
+          await Room.findByIdAndDelete(room._id);
+
+          if (room.users?.length) {
+            await User.updateMany(
+              { _id: { $in: room.users } },
+              {
+                $set: {
+                  "isJoined.status": false,
+                  "isJoined.roomId": null,
+                  temporarilyDisconnected: false,
+                  disconnectedAt: null,
+                },
+              }
+            );
+          }
+
+          if (activeRoomSession) {
+            this.sendMessage(ws, "END_ROOM", room._id);
+            this.sendMessageToEveryoneExceptOwnerInRoom(
+              ws,
+              activeRoomSession!.users,
+              "ROOM_ENDED",
+              room._id
+            );
+            this.broadcast("REMOVE_ROOM", room._id);
+
+            RoomService.rooms.delete(String(room._id));
+          }
+        }
+        if (user?.isJoined.status) {
+          const room = await Room.findOne({ users: user._id });
+
+          //   if (!room) {
+          //     throw new ApiError(404, "Room not found");
+          //   }
+          if (!room) return;
+
+          const activeRoomSession = RoomService.rooms.get(String(room._id));
+          const connectedClients = activeRoomSession?.users;
+          await Room.updateOne(
+            { _id: room._id },
+            { $pull: { users: user._id } }
+          );
+
+          user.isJoined = { status: false, roomId: null };
+          user.temporarilyDisconnected = false;
+          user.disconnectedAt = null;
+          await user.save({ validateBeforeSave: false });
+
+          if (activeRoomSession) {
+            this.sendMessageToEveryoneExpectSenderInRoom(
+              ws,
+              connectedClients!,
+              "LEFT_ROOM",
+              {
+                message: `${user.name} left the room`,
+                noOfJoinedUsers: connectedClients?.size,
+              }
+            );
+
+            this.sendMessage(ws, "LEAVE_ROOM", `${user.name} left the room`);
+            RoomService.rooms.get(String(room._id))?.users.delete(ws);
+          }
+        }
+      } catch (error) {
+        console.error("Error during disconnection cleanup:", error);
       }
-    }, 10000);
+    }, 30000);
 
     this.timeouts.set(userId!, timeout);
+  }
+
+  private async checkUserActiveInOtherSessions(
+    userId: string
+  ): Promise<boolean> {
+    // Check if user has an active WebSocket connection
+    let isActive = false;
+
+    this.wss.clients.forEach((client) => {
+      const extendedClient = client as WebSocket;
+
+      if (
+        extendedClient.userId === userId &&
+        extendedClient.readyState === WebSocket.OPEN
+      ) {
+        isActive = true;
+      }
+    });
+    // Also check database for recent activity if needed
+    if (!isActive) {
+      const user = await User.findById(userId);
+      if (user && !user.temporarilyDisconnected) {
+        isActive = true;
+      }
+    }
+
+    return isActive;
   }
 
   // send to all

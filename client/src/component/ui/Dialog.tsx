@@ -17,7 +17,7 @@ function Dialog({ closeDialog, btnContent, title, onClickBtn }: DialogProps) {
       onClick={() => {
         closeDialog();
       }}
-      className="absolute top-1/2 left-1/2 transform -translate-x-1/2  -translate-y-1/2 h-full   flex items-center justify-center bg-[#0000007e]  z-1 w-full"
+      className="absolute top-1/2 left-1/2 transform -translate-x-1/2  -translate-y-1/2 h-full   flex items-center justify-center bg-[#0000007e]  z-10 w-full "
     >
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
@@ -25,7 +25,7 @@ function Dialog({ closeDialog, btnContent, title, onClickBtn }: DialogProps) {
         exit={{ opacity: 0, scale: 0 }}
         transition={{ ease: "backInOut" }}
         onClick={(e) => e.stopPropagation()}
-        className="z-10 dark:bg-background_dark bg-background_light  rounded-md p-6 flex flex-col gap-3"
+        className="z-10 dark:bg-background_dark bg-background_light  rounded-md p-6 flex flex-col gap-3 dark:border dark:border-zinc-800"
       >
         <h1 className="md:text-base sm:text-sm text-xs">{title}</h1>
         <div className="flex justify-center gap-3">

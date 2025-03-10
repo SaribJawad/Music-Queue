@@ -17,6 +17,8 @@ export interface IUser extends Document {
   rooms: IRoom[];
   isAlive: boolean;
   isJoined: { status: boolean; roomId: ObjectId | null };
+  temporarilyDisconnected: boolean;
+  disconnectedAt: Date | null;
   refreshToken?: string;
   generateAccessToken: () => string;
   generateRefreshToken: () => string;
@@ -35,6 +37,11 @@ const userSchema: Schema<IUser> = new Schema(
     },
     refreshToken: { type: String },
     isAlive: { type: Boolean, default: false, required: true },
+    temporarilyDisconnected: { type: Boolean, default: false },
+    disconnectedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

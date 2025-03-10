@@ -75,6 +75,10 @@ export const authSlice = createSlice({
         )!,
       };
     },
+    setLogout: (state) => {
+      state.isAuthenticated = false;
+      state.userInfo = null;
+    },
   },
 });
 
@@ -86,6 +90,7 @@ export const {
   setUserIsJoinedLive,
   setUserLeaveRoom,
   setUserEndRoom,
+  setLogout,
 } = authSlice.actions;
 
 export default authSlice.reducer;

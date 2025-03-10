@@ -19,6 +19,7 @@ import {
   setCurrentSong,
   setLiveRoom,
   setNoOfJoinedUsers,
+  setPlayerStatus,
   setRemoveLiveRoom,
 } from "../features/liveRoom/liveRoom.slice";
 import { showToast } from "../utils/showToast";
@@ -157,6 +158,24 @@ export const WebSocketProvider = ({
         case "PLAY_NEXT_SONG":
           dispatch(setRemoveSong(parsedServerMessage.data.payload._id));
           dispatch(setCurrentSong(parsedServerMessage.data.payload));
+          break;
+
+        case "PLAY_VIDEO":
+          dispatch(
+            setPlayerStatus({
+              status: 1,
+              timestamps: parsedServerMessage.data.payload,
+            })
+          );
+          break;
+
+        case "PAUSE_VIDEO":
+          dispatch(
+            setPlayerStatus({
+              status: 2,
+              timestamps: parsedServerMessage.data.payload,
+            })
+          );
           break;
 
         case "ERROR":

@@ -1,16 +1,16 @@
 function FeatureSection() {
   const features = [
     {
-      title: "Create Music Rooms",
-      description: "Host your own music streams and invite friends to join.",
+      title: "Create Live Rooms",
+      description: "Create your own rooms and invite friends to join.",
     },
     {
-      title: "Vote on Songs",
-      description: "Upvote or downvote songs to influence the playlist.",
+      title: "Vote on Video/Songs",
+      description: "Upvote or downvote videos/songs to influence the room.",
     },
     {
       title: "YouTube Integration",
-      description: "Add your favorite YouTube songs to the queue.",
+      description: "Add your favorite YouTube videos to the queue.",
     },
     {
       title: "SoundCloud Support",

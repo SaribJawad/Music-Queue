@@ -6,8 +6,9 @@ import { AnimatePresence } from "motion/react";
 import Dialog from "./ui/Dialog";
 import { useWebSocketContext } from "../contexts/webSocketProvider";
 import { showToast } from "../utils/showToast";
-import { useAppSelector } from "../app/hook";
-import { selectUserInfo } from "../features/auth/auth.slice";
+import { useAppDispatch, useAppSelector } from "../app/hook";
+import { selectUserInfo, setLogout } from "../features/auth/auth.slice";
+import { api } from "../config/axios";
 
 interface NavbarProps {
   variant?: NavbarVariant;
@@ -21,6 +22,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
   const [dialog, setDialog] = useState<
     "logout" | "endRoom" | "leaveRoom" | null
   >(null);
+  const dispatch = useAppDispatch();
   const { isConnected, sendMessage } = useWebSocketContext();
   const loggedInUser = useAppSelector(selectUserInfo);
   const navigate = useNavigate();
@@ -70,6 +72,18 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
     showToast("success", "Room ended.");
   };
 
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/google/logout");
+
+      dispatch(setLogout());
+
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   const renderLeftContent = () => {
     switch (variant) {
       case "guest":
@@ -107,9 +121,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
         <AnimatePresence>
           {dialog === "logout" && (
             <Dialog
-              onClickBtn={() => {
-                return;
-              }}
+              onClickBtn={handleLogout}
               closeDialog={handleDialogClose}
               title="You sure you want to logout"
               btnContent="Logout"
@@ -120,7 +132,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
               closeDialog={handleDialogClose}
               onClickBtn={handleEndRoom}
               title="You sure you want to end Stream?"
-              btnContent="Close rooom"
+              btnContent="End rooom"
             />
           )}
           {dialog === "leaveRoom" && (
