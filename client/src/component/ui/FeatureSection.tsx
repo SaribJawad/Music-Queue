@@ -13,7 +13,7 @@ function FeatureSection() {
       description: "Add your favorite YouTube videos to the queue.",
     },
     {
-      title: "SoundCloud Support",
+      title: "SoundCloud Support Soon",
       description: "Integrate SoundCloud tracks into your music streams.",
     },
   ];

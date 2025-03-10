@@ -3,7 +3,7 @@ import { FiArrowRightCircle } from "react-icons/fi";
 function HowItWorks() {
   const steps = [
     "Create a room or join an existing one",
-    "Add videos/songs from YouTube or SoundCloud to the queue",
+    "Add videos/songs from YouTube to the queue",
     "Vote to influence the room",
     "Enjoy the videos/songs with friends in real-time",
   ];

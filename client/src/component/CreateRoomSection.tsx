@@ -10,19 +10,24 @@ import { selectUserInfo } from "../features/auth/auth.slice";
 
 function CreateRoomSection() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   const loggedInUser = useAppSelector(selectUserInfo);
   const [roomType, setRoomType] = useState<"youtube" | "soundcloud">();
   const { sendMessage, isConnected } = useWebSocketContext();
 
   const providers = [
     { name: "youtube", icon: <FaYoutube size={30} color="#F70000" /> },
-    {
-      name: "soundcloud",
-      icon: <RiSoundcloudFill size={30} color="#F76F0D" />,
-    },
+    // {
+    //   name: "soundcloud",
+    //   icon: <RiSoundcloudFill size={30} color="#F76F0D" />,
+    // },
   ];
 
   const handleCreateRoom = (roomName: string, roomPassword: string) => {
+    if (roomType === "soundcloud") {
+      showToast("emoji", "Comming soon!");
+    }
+
     const createRoomData = {
       userId: loggedInUser?._id,
       roomType,
