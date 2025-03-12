@@ -243,3 +243,86 @@ export async function handleEndRoom({ clientData, ws, wsService }: IHandleArg) {
     wsService.sendMessage(ws, "ERROR", errMessage);
   }
 }
+
+export async function handleTimeStamps({
+  clientData,
+  ws,
+  wsService,
+}: IHandleArg) {
+  try {
+    const parsedHandleTimeStamps = z
+      .object({
+        roomId: z.string().regex(objectIdRegex),
+        userId: z.string().regex(objectIdRegex),
+        username: z.string(),
+        timestamps: z.number(),
+      })
+      .safeParse(clientData.payload);
+
+    if (!parsedHandleTimeStamps.success) {
+      const errorMsg = parsedHandleTimeStamps.error.errors
+        .map((err) => err.message)
+        .join(", ");
+      wsService.sendMessage(ws, "ERROR", errorMsg);
+      return;
+    }
+
+    const {
+      roomId,
+      timestamps,
+      userId,
+      username: usernameFromClient,
+    } = parsedHandleTimeStamps.data;
+
+    const handleTimeStampsData = await RoomService.timestamps({
+      roomId,
+      timestamps,
+      userId,
+      username: usernameFromClient,
+    });
+
+    wsService.sendMessage(handleTimeStampsData?.ownerWs, "TIMESTAMPS", {
+      userId,
+      username: handleTimeStampsData?.username,
+      timestamps: handleTimeStampsData?.timestamps,
+    });
+  } catch (error) {
+    console.error("Error joining room:", error);
+    let errMessage =
+      error instanceof Error
+        ? error.message
+        : "An unexpected error occurred while joining room.";
+    wsService.sendMessage(ws, "ERROR", errMessage);
+  }
+}
+
+export async function handleSyncAll({ clientData, ws, wsService }: IHandleArg) {
+  const parsedClientData = z
+    .object({
+      roomId: z.string().regex(objectIdRegex),
+      timestamps: z.number(),
+    })
+    .safeParse(clientData.payload);
+
+  if (!parsedClientData.success) {
+    const errorMsg = parsedClientData.error.errors.map((err) => err).join(", ");
+
+    wsService.sendMessage(ws, "ERROR", errorMsg);
+    return;
+  }
+
+  const { roomId, timestamps } = parsedClientData.data;
+
+  const activeRoomSession = RoomService.rooms.get(roomId);
+
+  if (!activeRoomSession) {
+    wsService.sendMessage(ws, "ERROR", "Room not found in active session");
+    return;
+  }
+
+  wsService.sendMessageToEveryoneInRoom(
+    activeRoomSession.users,
+    "SYNC_ALL",
+    timestamps
+  );
+}

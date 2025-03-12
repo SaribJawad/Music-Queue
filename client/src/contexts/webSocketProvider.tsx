@@ -17,9 +17,10 @@ import {
 } from "../features/auth/auth.slice";
 import {
   setCurrentSong,
+  setJoinedUsersTimestamps,
   setLiveRoom,
+  setLiveRoomTimestamps,
   setNoOfJoinedUsers,
-  setPlayerStatus,
   setRemoveLiveRoom,
 } from "../features/liveRoom/liveRoom.slice";
 import { showToast } from "../utils/showToast";
@@ -72,6 +73,7 @@ export const WebSocketProvider = ({
 
     socket.onmessage = (event) => {
       const serverMessage = JSON.parse(event.data);
+
       const parsedServerMessage = ServerMessageSchema.safeParse(serverMessage);
 
       switch (parsedServerMessage.data?.action) {
@@ -99,7 +101,6 @@ export const WebSocketProvider = ({
             replace: true,
           });
           dispatch(setUserIsJoinedLive(parsedServerMessage.data.payload));
-
           break;
 
         case "USER_JOINED":
@@ -155,27 +156,18 @@ export const WebSocketProvider = ({
           dispatch(setUpvoteSong(parsedServerMessage.data.payload));
           break;
 
+        case "SYNC_ALL":
+          console.log(parsedServerMessage.data);
+          dispatch(setLiveRoomTimestamps(parsedServerMessage.data.payload));
+          break;
+
         case "PLAY_NEXT_SONG":
           dispatch(setRemoveSong(parsedServerMessage.data.payload._id));
           dispatch(setCurrentSong(parsedServerMessage.data.payload));
           break;
 
-        case "PLAY_VIDEO":
-          dispatch(
-            setPlayerStatus({
-              status: 1,
-              timestamps: parsedServerMessage.data.payload,
-            })
-          );
-          break;
-
-        case "PAUSE_VIDEO":
-          dispatch(
-            setPlayerStatus({
-              status: 2,
-              timestamps: parsedServerMessage.data.payload,
-            })
-          );
+        case "TIMESTAMPS":
+          dispatch(setJoinedUsersTimestamps(parsedServerMessage.data.payload));
           break;
 
         case "ERROR":
@@ -185,7 +177,7 @@ export const WebSocketProvider = ({
           break;
       }
 
-      console.log("Received:", parsedServerMessage);
+      //   console.log("Received:", parsedServerMessage);
     };
 
     socket.onclose = () => {

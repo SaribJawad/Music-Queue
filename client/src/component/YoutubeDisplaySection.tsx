@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { SongType } from "../schemas/songSchema";
 import { useWebSocketContext } from "../contexts/webSocketProvider";
@@ -9,10 +9,10 @@ import { useParams } from "react-router-dom";
 import { FaUser } from "react-icons/fa6";
 import {
   selectNoOfJoinedUser,
-  selectPlayerStatus,
   setCurrentSong,
 } from "../features/liveRoom/liveRoom.slice";
-import VolumeControlButton from "./VolumeControlButton";
+import SyncToInfo from "./SyncToInfo";
+import { selectUserInfo } from "../features/auth/auth.slice";
 
 // youtube iframe api types
 declare global {
@@ -32,12 +32,18 @@ function YoutubeDisplaySection({
   isAdmin,
 }: IYoutubeDisplaySectionProps) {
   const playerContainer = useRef<HTMLDivElement>(null);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [isSyncToInfoOpen, setIsSyncToInfoOpen] = useState(false);
   const youtubePlayer = useRef<YT.Player>();
   const songsQueue = useAppSelector(selectSongQueue);
+  const roomTimestamps = useAppSelector(
+    (state) => state.liveRoom.liveRoomTimestamps
+  );
   const dispatch = useAppDispatch();
   const songsQueueRef = useRef(songsQueue);
   const noOfJoinedUser = useAppSelector(selectNoOfJoinedUser);
-  const playerStatus = useAppSelector(selectPlayerStatus);
+  const userInfo = useAppSelector(selectUserInfo);
+
   const { isConnected, sendMessage } = useWebSocketContext();
   const { roomId } = useParams();
 
@@ -79,33 +85,28 @@ function YoutubeDisplaySection({
       videoId: currentSong?.externalId,
       playerVars: {
         autoplay: 0,
-        controls: isAdmin ? 1 : 0,
+        controls: 1,
         rel: 0,
         autohide: 1,
       },
       events: {
-        onReady: (e) => {
-          console.log("onPlayerReady");
+        onReady: () => {
+          setIsPlayerReady(true);
         },
         onStateChange: (e) => {
-          const currentTime = e.target.getCurrentTime();
+          const playerStatus = e.target.getPlayerState();
 
-          if (e.data === 1 && isAdmin) {
-            handlePlayVideo(currentTime);
-          }
-
-          if (e.data === 2 && isAdmin) {
-            handlePauseVideo(currentTime);
-          }
-
-          if (e.data === 0) {
-            handlePlayNext();
+          if (playerStatus === 1) {
+            setIsPlayerReady(true);
+          } else {
+            setIsPlayerReady(false);
           }
         },
       },
     });
   };
 
+  //   handle play next
   const handlePlayNext = () => {
     if (songsQueueRef.current.length <= 0) {
       dispatch(setCurrentSong(null));
@@ -126,8 +127,16 @@ function YoutubeDisplaySection({
     }
   };
 
-  const handlePlayVideo = (timestamps: number) => {
-    const sent = sendMessage({ timestamps, roomId }, "PLAY_VIDEO");
+  //   handle sync all
+  const handleSyncAll = (userTimestamps?: number) => {
+    const timestamps =
+      userTimestamps ?? youtubePlayer.current?.getCurrentTime();
+
+    if (timestamps === undefined) {
+      return showToast("error", "Could not get timestamp!");
+    }
+
+    const sent = sendMessage({ timestamps, roomId }, "SYNC_ALL");
     if (sent) {
       return;
     } else if (isConnected) {
@@ -138,35 +147,48 @@ function YoutubeDisplaySection({
       showToast("error", "Something went wrong! Try again.");
     }
   };
+
+  //   send timestamps every second
+  useEffect(() => {
+    if (!youtubePlayer.current || !isPlayerReady || isAdmin) return;
+
+    const interval = setInterval(() => {
+      let timestamps = youtubePlayer.current?.getCurrentTime();
+      if (timestamps !== undefined) {
+        timestamps = Math.floor(timestamps);
+      }
+
+      const sent = sendMessage(
+        { roomId, timestamps, userId: userInfo?._id, username: userInfo?.name },
+        "TIMESTAMPS"
+      );
+
+      if (sent) {
+        return;
+      } else if (isConnected) {
+        console.warn(
+          "Failed to send message even though connection is established"
+        );
+      } else {
+        showToast("error", "Something went wrong! Try again.");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [
+    isConnected,
+    roomId,
+    userInfo,
+    currentSong?.externalId,
+    isPlayerReady,
+    isAdmin,
+  ]);
 
   useEffect(() => {
-    if (
-      youtubePlayer.current &&
-      typeof youtubePlayer.current.seekTo === "function" &&
-      currentSong
-    ) {
-      if (playerStatus.status === 1) {
-        youtubePlayer.current?.seekTo(playerStatus.timestamps, true);
-        youtubePlayer.current?.playVideo();
-      } else if (playerStatus.status === 2) {
-        youtubePlayer.current?.seekTo(playerStatus.timestamps, true);
-        youtubePlayer.current?.pauseVideo();
-      }
-    }
-  }, [playerStatus, currentSong]);
+    if (!roomTimestamps) return;
 
-  const handlePauseVideo = (timestamps: number) => {
-    const sent = sendMessage({ timestamps, roomId }, "PAUSE_VIDEO");
-    if (sent) {
-      return;
-    } else if (isConnected) {
-      console.warn(
-        "Failed to send message even though connection is established"
-      );
-    } else {
-      showToast("error", "Something went wrong! Try again.");
-    }
-  };
+    youtubePlayer.current?.seekTo(roomTimestamps, true);
+  }, [roomTimestamps]);
 
   return (
     <section className=" xl:flex-1  flex flex-col gap-3">
@@ -176,14 +198,26 @@ function YoutubeDisplaySection({
           <FaUser />
           <span>{noOfJoinedUser}</span>
         </div>
+        {currentSong && isAdmin && (
+          <div className="flex items-center gap-2 justify-end">
+            <Button onClick={() => handleSyncAll()} size="sm">
+              Sync All
+            </Button>
+            <Button
+              onClick={() => setIsSyncToInfoOpen(!isSyncToInfoOpen)}
+              size="sm"
+            >
+              Sync To
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="aspect-video xl:aspect-auto xl:h-[90%] w-full  relative">
-        {!isAdmin && currentSong && (
-          <div className=" absolute h-full w-full "></div>
-        )}
+        <SyncToInfo handleSyncAll={handleSyncAll} isOpen={isSyncToInfoOpen} />
+
         {!currentSong ? (
-          <div className="h-full w-full flex items-center justify-center sm:text-base text-sm z-0 ">
+          <div className="h-full w-full flex items-center justify-center sm:text-base text-sm  ">
             No current song playing right now, Add songs to play!
           </div>
         ) : (
@@ -203,14 +237,10 @@ function YoutubeDisplaySection({
           </span>
         </div>
 
-        {isAdmin && currentSong ? (
+        {isAdmin && currentSong && (
           <Button onClick={handlePlayNext} size="sm" className="flex-shrink-0">
             Play next
           </Button>
-        ) : (
-          currentSong && (
-            <VolumeControlButton youtubePlayer={youtubePlayer.current} />
-          )
         )}
       </div>
     </section>

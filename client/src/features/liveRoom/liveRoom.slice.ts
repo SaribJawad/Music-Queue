@@ -7,20 +7,22 @@ interface ILiveRoomState {
   liveRoom: LiveRoomType | undefined;
   roomType: "youtube" | "soundcloud" | undefined;
   noOfJoinedUsers: number;
-  playerStatus: {
-    status: 1 | 2;
-    timestamps: number;
-  };
+  joinedUsersTimestamps: JoinedUsersTimestamps[];
+  liveRoomTimestamps: number | null;
+}
+
+interface JoinedUsersTimestamps {
+  userId: string;
+  username: string;
+  timestamps: number;
 }
 
 const initialState: ILiveRoomState = {
   liveRoom: undefined,
   roomType: undefined,
   noOfJoinedUsers: 0,
-  playerStatus: {
-    status: 2,
-    timestamps: 0,
-  },
+  joinedUsersTimestamps: [],
+  liveRoomTimestamps: null,
 };
 
 export const liveRoomState = createSlice({
@@ -40,11 +42,22 @@ export const liveRoomState = createSlice({
     setNoOfJoinedUsers: (state, action: PayloadAction<number>) => {
       state.noOfJoinedUsers = action.payload;
     },
-    setPlayerStatus: (
+    setJoinedUsersTimestamps: (
       state,
-      action: PayloadAction<{ status: 1 | 2; timestamps: number }>
+      action: PayloadAction<JoinedUsersTimestamps>
     ) => {
-      state.playerStatus = action.payload;
+      const existingIndex = state.joinedUsersTimestamps.findIndex(
+        (entry) => entry.userId === action.payload.userId
+      );
+
+      if (existingIndex === -1) {
+        state.joinedUsersTimestamps.push(action.payload);
+      } else {
+        state.joinedUsersTimestamps[existingIndex] = action.payload;
+      }
+    },
+    setLiveRoomTimestamps: (state, action: PayloadAction<number>) => {
+      state.liveRoomTimestamps = action.payload;
     },
   },
 });
@@ -54,7 +67,8 @@ export const {
   setCurrentSong,
   setRemoveLiveRoom,
   setNoOfJoinedUsers,
-  setPlayerStatus,
+  setJoinedUsersTimestamps,
+  setLiveRoomTimestamps,
 } = liveRoomState.actions;
 export default liveRoomState.reducer;
 
@@ -72,6 +86,6 @@ export const selectRoomType = (state: RootState) => {
 export const selectNoOfJoinedUser = (state: RootState) => {
   return state.liveRoom.noOfJoinedUsers;
 };
-export const selectPlayerStatus = (state: RootState) => {
-  return state.liveRoom.playerStatus;
+export const selectJoinedusersTimestamps = (state: RootState) => {
+  return state.liveRoom.joinedUsersTimestamps;
 };

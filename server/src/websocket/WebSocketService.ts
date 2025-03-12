@@ -9,6 +9,8 @@ import {
   handleJoinRoom,
   handleLeaveRoom,
   handleRefreshJoinRoom,
+  handleSyncAll,
+  handleTimeStamps,
 } from "src/handlers/roomHandler";
 import {
   handleAddSong,
@@ -41,17 +43,6 @@ class WebSocketService {
   constructor(server: Server) {
     this.wss = new WebSocketServer({ server });
     this.wss.on("connection", this.handleConnection.bind(this));
-
-    // setInterval(() => {
-    //   this.wss.clients.forEach((ws) => {
-    //     if (ws.isAlive === false) {
-    //       return ws.terminate();
-    //     }
-
-    //     ws.isAlive = false;
-    //     ws.ping();
-    //   });
-    // }, 30000);
   }
 
   private async handleConnection(ws: WebSocket, req: any) {
@@ -124,40 +115,17 @@ class WebSocketService {
           await handleUpVoteSong({ ws, clientData, wsService: this });
           break;
 
-        case "PLAY_VIDEO":
-          const roomIdForPlayVideo = clientData.payload.roomId;
-          const connectedClientForPlay =
-            RoomService.rooms.get(roomIdForPlayVideo);
-          console.log(clientData);
-
-          if (connectedClientForPlay?.users?.size! > 1) {
-            this.sendMessageToEveryoneExpectSenderInRoom(
-              ws,
-              connectedClientForPlay!.users,
-              "PLAY_VIDEO",
-              clientData.payload.timestamps
-            );
-          }
-          break;
-
-        case "PAUSE_VIDEO":
-          const roomIdForPauseVideo = clientData.payload.roomId;
-          const connectedClientForPause =
-            RoomService.rooms.get(roomIdForPauseVideo);
-          console.log(clientData);
-
-          if (connectedClientForPause?.users.size! > 1) {
-            this.sendMessageToEveryoneExpectSenderInRoom(
-              ws,
-              connectedClientForPause!.users,
-              "PAUSE_VIDEO",
-              clientData.payload.timestamps
-            );
-          }
-          break;
-
         case "PLAY_NEXT_SONG":
           await handlePlayNextSong({ ws, clientData, wsService: this });
+          break;
+
+        case "TIMESTAMPS":
+          handleTimeStamps({ ws, clientData, wsService: this });
+          break;
+
+        case "SYNC_ALL":
+          console.log(clientData.payload);
+          handleSyncAll({ ws, clientData, wsService: this });
           break;
 
         default:
@@ -252,6 +220,8 @@ class WebSocketService {
             );
           }
 
+          activeRoomSession?.userTimestamps.delete(userId!);
+
           if (activeRoomSession) {
             this.sendMessage(ws, "END_ROOM", room._id);
             this.sendMessageToEveryoneExceptOwnerInRoom(
@@ -303,7 +273,7 @@ class WebSocketService {
       } catch (error) {
         console.error("Error during disconnection cleanup:", error);
       }
-    }, 30000);
+    }, 15000);
 
     this.timeouts.set(userId!, timeout);
   }

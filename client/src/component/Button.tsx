@@ -1,7 +1,5 @@
 interface ButtonProps {
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => void | Promise<void>;
+  onClick?: (event: any) => void | Promise<void>;
   children: React.ReactNode;
   size?: "sm" | "md" | "lg";
   className?: string;

@@ -42,6 +42,11 @@ const LeaveRoomPayloadSchema = z.object({
   roomId: z.string().regex(objectIdRegex),
 });
 
+const TimestampsPayloadSchema = LeaveRoomPayloadSchema.extend({
+  username: z.string(),
+  timestamps: z.number(),
+});
+
 type CreateRoomPayloadType = z.infer<typeof RoomPayLoadSchema>;
 type AddSongPayloadType = z.infer<typeof AddSongSchema>;
 type JoinRoomPayloadType = z.infer<typeof JoinRoomPayloadSchema>;
@@ -51,6 +56,12 @@ type EndRoomType = z.infer<typeof LeaveRoomPayloadSchema>;
 type DeleteSongType = z.infer<typeof DeleteSongSchema>;
 type UpVoteSongType = z.infer<typeof UpVoteSongSchema>;
 type PlayNextSongType = z.infer<typeof DeleteSongSchema>;
+type TimestampsType = z.infer<typeof TimestampsPayloadSchema>;
+
+interface UserTimestamp {
+  username: string;
+  timestamps: number;
+}
 
 class RoomService {
   public static rooms: Map<
@@ -60,6 +71,7 @@ class RoomService {
       roomName: string;
       roomType: "youtube" | "soundcloud";
       ownerWs?: WebSocket;
+      userTimestamps: Map<string, UserTimestamp>;
       roomPassword: string;
     }
   > = new Map();
@@ -126,6 +138,7 @@ class RoomService {
         roomName: payload.roomName,
         roomPassword: payload.roomPassword,
         ownerWs: payload.ws,
+        userTimestamps: new Map(),
         roomType: payload.roomType,
       });
 
@@ -227,17 +240,15 @@ class RoomService {
       await user.save({ validateBeforeSave: false });
 
       activeRoomSession.users.add(ws);
+      activeRoomSession?.userTimestamps.set(userId, {
+        timestamps: 0,
+        username: user.name,
+      });
 
       // Set up disconnect handler for the WebSocket
       ws.on("close", () => {
         console.log(`WebSocket disconnected from room ${roomId}`);
         activeRoomSession.users.delete(ws);
-
-        // Cleanup empty rooms from memory
-        // if (activeRoomSession.users.size === 0) {
-        //   console.log(`Removing empty room session: ${roomId}`);
-        //   this.rooms.delete(roomId);
-        // }
       });
 
       const joinedUsers = room.users.filter(
@@ -277,6 +288,7 @@ class RoomService {
         roomName: room.roomName,
         roomPassword: room.roomPassword,
         roomType: room.roomType,
+        userTimestamps: new Map(),
         ownerWs: undefined,
       });
     }
@@ -342,6 +354,8 @@ class RoomService {
       if (!updatedUser) {
         throw new ApiError(500, "Something went wrong while updating room");
       }
+
+      activeRoomSession?.userTimestamps.delete(userId);
 
       return {
         username: updatedUser.name,
@@ -525,6 +539,32 @@ class RoomService {
       await room.save({ validateBeforeSave: false });
 
       return { song: nextSong, connectedClients: activeSessionRoom?.users };
+    } catch (error) {
+      const errMessage =
+        error instanceof Error ? error.message : "Failed to join room";
+      throw new Error(errMessage);
+    }
+  }
+
+  static async timestamps(payload: TimestampsType) {
+    try {
+      const { roomId, timestamps, userId, username } = payload;
+
+      const activeRoomSession = this.rooms.get(roomId);
+
+      if (!activeRoomSession) return;
+
+      if (userId && activeRoomSession.userTimestamps.has(userId)) {
+        const userTimestamp = activeRoomSession.userTimestamps.get(userId)!;
+        userTimestamp.timestamps = timestamps;
+        userTimestamp.username = username;
+      }
+
+      return {
+        ownerWs: activeRoomSession.ownerWs,
+        username,
+        timestamps,
+      };
     } catch (error) {
       const errMessage =
         error instanceof Error ? error.message : "Failed to join room";
