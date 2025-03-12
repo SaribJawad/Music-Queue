@@ -69,12 +69,12 @@ function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-4 p-6 dark:bg-background_dark bg-background_light  rounded-md  "
         >
-          <div>
+          <div className="flex flex-col gap-1">
             <label className="block text-sm font-medium">Passcode</label>
             <input
               {...register("password")}
               type="password"
-              className="w-full p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary "
+              className="w-full md:text-base text-sm  p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary "
               placeholder="Enter passcode"
             />
             {errors.password && (

@@ -63,7 +63,7 @@ const CreateStreamDialog = ({
             <input
               {...register("name")}
               type="text"
-              className="w-full p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary   "
+              className="w-full  md:text-base text-sm  p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary   "
               placeholder="Enter room name"
             />
             {errors.name && (
@@ -76,7 +76,7 @@ const CreateStreamDialog = ({
             <input
               {...register("password")}
               type="password"
-              className="w-full p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary "
+              className="w-full md:text-base text-sm  p-2 outline-none rounded-md bg-background_light_secondary dark:bg-background_dark_secondary "
               placeholder="Enter passcode"
             />
             {errors.password && (
