@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import mongoose from "mongoose";
 import { User } from "src/models/user.model";
 import { ApiError } from "src/utils/ApiError";
 import { ApiResponse } from "src/utils/ApiResponse";
@@ -15,6 +14,7 @@ import { asyncHandler } from "src/utils/asyncHandler";
 import jwt from "jsonwebtoken";
 import { REFRESH_TOKEN_SECRET } from "src/config/config";
 import { Room } from "src/models/room.model";
+import mongoose from "mongoose";
 const generateAccessAndRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User.findById(userId);

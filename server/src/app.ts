@@ -3,7 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import passport from "passport";
-import "./config/passport-setup";
+import "./config/passport-setup.js";
 import http from "http";
 
 const app: Express = express();

@@ -1,4 +1,3 @@
-import mongoose, { ObjectId } from "mongoose";
 import { Profile } from "passport-google-oauth20";
 import { IUser, User } from "src/models/user.model";
 import { ApiError } from "src/utils/ApiError";
@@ -7,6 +6,8 @@ import { asyncHandler } from "src/utils/asyncHandler";
 import jwt from "jsonwebtoken";
 import { REFRESH_TOKEN_SECRET } from "src/config/config";
 import { Room } from "src/models/room.model";
+import { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshToken = async (
   userId: ObjectId
