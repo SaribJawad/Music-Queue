@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaYoutube } from "react-icons/fa6";
-import { RiSoundcloudFill } from "react-icons/ri";
 import { AnimatePresence } from "motion/react";
 import CreateStreamDialog from "./ui/CreateStreamDialog";
 import { useWebSocketContext } from "../contexts/webSocketProvider";

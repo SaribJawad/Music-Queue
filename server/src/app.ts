@@ -31,12 +31,12 @@ import roomRouter from "./routes/room.route";
 // import songRouter from "./routes/song.route";
 import errorHandler from "./middlewares/errorHandler.middleware";
 import WebSocketService from "./websocket/WebSocketService";
+import path from "path";
 
 //  routes declaration
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/room", roomRouter);
-// app.use("/api/v1/song", songRouter);
 
 app.use(errorHandler as express.ErrorRequestHandler);
 

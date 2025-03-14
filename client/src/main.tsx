@@ -9,13 +9,13 @@ import { store } from "./app/store.ts";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
-  //   <StrictMode>
-  <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </QueryClientProvider>
-  </Provider>
-  // </StrictMode>
+  <StrictMode>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </Provider>
+  </StrictMode>
 );

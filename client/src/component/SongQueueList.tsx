@@ -1,4 +1,4 @@
-import { BiSolidDownvote, BiSolidUpvote } from "react-icons/bi";
+import { BiSolidUpvote } from "react-icons/bi";
 import { SongType } from "../schemas/songSchema";
 import { FaTrash } from "react-icons/fa6";
 import { useWebSocketContext } from "../contexts/webSocketProvider";
