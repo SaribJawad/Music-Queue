@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import mongoose from "mongoose";
-import { DB_NAME, MONGODB_URI } from "./config";
+import { DB_NAME, MONGODB_URI } from "./config.js";
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const connectionInstance = yield mongoose.connect(`${MONGODB_URI}/${DB_NAME}`);

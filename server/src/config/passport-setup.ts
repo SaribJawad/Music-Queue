@@ -1,8 +1,8 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "./config";
-import { User } from "src/models/user.model";
-import { ApiError } from "src/utils/ApiError";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "./config.js";
+import { User } from "src/models/user.model.js";
+import { ApiError } from "src/utils/ApiError.js";
 
 passport.use(
   new GoogleStrategy(

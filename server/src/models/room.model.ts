@@ -1,7 +1,7 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
-import { ISong } from "./song.model";
-import { IUser } from "./user.model";
+import { ISong } from "./song.model.js";
+import { IUser } from "./user.model.js";
 
 type RoomTypes = "youtube" | "soundcloud";
 
