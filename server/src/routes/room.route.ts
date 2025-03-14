@@ -2,9 +2,9 @@ import {
   getAllRooms,
   getSongQueue,
   getRoom,
-} from "src/controllers/room.controller";
+} from "src/controllers/room.controller.js";
 import { Router } from "express";
-import { verifyJWT } from "src/middlewares/auth.middleware";
+import { verifyJWT } from "src/middlewares/auth.middleware.js";
 
 const router = Router();
 

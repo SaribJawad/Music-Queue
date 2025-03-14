@@ -1,5 +1,5 @@
 import mongoose, { ObjectId, Schema } from "mongoose";
-import { IRoom } from "./room.model";
+import { IRoom } from "./room.model.js";
 import jwt from "jsonwebtoken";
 import {
   ACCESS_TOKEN_SECRET,

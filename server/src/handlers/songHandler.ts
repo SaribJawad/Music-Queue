@@ -3,9 +3,9 @@ import {
   DeleteSongSchema,
   PlayNextSongSchema,
   UpVoteSongSchema,
-} from "src/schema/songSchemas";
-import RoomService from "src/services/RoomService";
-import { ClientMessage } from "src/websocket/WebSocketService";
+} from "src/schema/songSchemas.js";
+import RoomService from "src/services/RoomService.js";
+import { ClientMessage } from "src/websocket/WebSocketService.js";
 import { WebSocket } from "ws";
 
 interface IHandleArg {

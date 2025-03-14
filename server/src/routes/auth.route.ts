@@ -5,8 +5,8 @@ import {
   handelGoogleLogout,
   handleGoogleLogin,
   refreshAcccessToken,
-} from "src/controllers/auth.controller";
-import { verifyJWT } from "src/middlewares/auth.middleware";
+} from "src/controllers/auth.controller.js";
+import { verifyJWT } from "src/middlewares/auth.middleware.js";
 
 const router = Router();
 

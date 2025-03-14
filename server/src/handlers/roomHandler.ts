@@ -1,12 +1,11 @@
-import { Room } from "src/models/room.model";
-import { objectIdRegex } from "src/schema/songSchemas";
+import { objectIdRegex } from "src/schema/songSchemas.js";
 import {
   CreateRoomSchema,
   JoinRoomSchema,
   RefreshJoinRoomSchema,
-} from "src/schema/roomSchemas";
-import RoomService from "src/services/RoomService";
-import { ClientMessage } from "src/websocket/WebSocketService";
+} from "src/schema/roomSchemas.js";
+import RoomService from "src/services/RoomService.js";
+import { ClientMessage } from "src/websocket/WebSocketService.js";
 import { WebSocket } from "ws";
 import { z } from "zod";
 

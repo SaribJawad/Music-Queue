@@ -26,12 +26,11 @@ app.use(passport.initialize());
 
 //  routes
 
-import authRouter from "./routes/auth.route";
-import roomRouter from "./routes/room.route";
+import authRouter from "./routes/auth.route.js";
+import roomRouter from "./routes/room.route.js";
 // import songRouter from "./routes/song.route";
-import errorHandler from "./middlewares/errorHandler.middleware";
-import WebSocketService from "./websocket/WebSocketService";
-import path from "path";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
+import WebSocketService from "./websocket/WebSocketService.js";
 
 //  routes declaration
 

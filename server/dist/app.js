@@ -17,11 +17,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 //  routes
-import authRouter from "./routes/auth.route";
-import roomRouter from "./routes/room.route";
+import authRouter from "./routes/auth.route.js";
+import roomRouter from "./routes/room.route.js";
 // import songRouter from "./routes/song.route";
-import errorHandler from "./middlewares/errorHandler.middleware";
-import WebSocketService from "./websocket/WebSocketService";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
+import WebSocketService from "./websocket/WebSocketService.js";
 //  routes declaration
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/room", roomRouter);

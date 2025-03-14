@@ -8,10 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import mongoose from "mongoose";
-import { Room } from "src/models/room.model";
-import { asyncHandler } from "src/utils/asyncHandler";
-import { ApiResponse } from "src/utils/ApiResponse";
-import { ApiError } from "src/utils/ApiError";
+import { Room } from "src/models/room.model.js";
+import { asyncHandler } from "src/utils/asyncHandler.js";
+import { ApiResponse } from "src/utils/ApiResponse.js";
+import { ApiError } from "src/utils/ApiError.js";
 const getAllRooms = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const rooms = yield Room.aggregate([

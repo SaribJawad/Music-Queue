@@ -1,5 +1,5 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { IRoom } from "./room.model";
+import { IRoom } from "./room.model.js";
 
 type Source = "youtube" | "soundcloud";
 

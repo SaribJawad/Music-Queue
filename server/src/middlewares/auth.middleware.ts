@@ -1,8 +1,8 @@
-import { ApiError } from "src/utils/ApiError";
-import { asyncHandler } from "src/utils/asyncHandler";
+import { ApiError } from "src/utils/ApiError.js";
+import { asyncHandler } from "src/utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN_SECRET } from "src/config/config";
-import { User } from "src/models/user.model";
+import { ACCESS_TOKEN_SECRET } from "src/config/config.js";
+import { User } from "src/models/user.model.js";
 
 interface JwtPayload extends jwt.JwtPayload {
   _id: string;
