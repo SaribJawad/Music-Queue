@@ -1,4 +1,4 @@
-import { server } from "./app";
+import { server } from "./app.js";
 import connectDb from "./config/db";
 import { PORT } from "./config/config";
 connectDb()
