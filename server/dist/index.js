@@ -1,6 +1,6 @@
 import { server } from "./app.js";
-import connectDb from "./config/db";
-import { PORT } from "./config/config";
+import connectDb from "./config/db.js";
+import { PORT } from "./config/config.js";
 connectDb()
     .then(() => {
     server.on("error", (error) => {
