@@ -8,7 +8,7 @@ function LoginPage() {
     const baseURL =
       window.location.hostname === "localhost"
         ? "http://localhost:3000/api/v1/auth/google"
-        : API_URL;
+        : `${API_URL}/api/v1/auth/google`;
 
     window.location.href = baseURL;
   };
