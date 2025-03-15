@@ -20,8 +20,10 @@ const verifyJWT = asyncHandler((req, _, next) => __awaiter(void 0, void 0, void 
         if (!accessToken) {
             new ApiError(401, "Unauthorized request");
         }
+        console.log(accessToken, "access token");
         const decodedToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
         const user = yield User.findById(decodedToken === null || decodedToken === void 0 ? void 0 : decodedToken._id);
+        console.log(user === null || user === void 0 ? void 0 : user._id, "user");
         if (!user) {
             throw new ApiError(401, "Invalid access token");
         }

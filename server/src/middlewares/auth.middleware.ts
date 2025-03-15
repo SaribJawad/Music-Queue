@@ -21,12 +21,15 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
       new ApiError(401, "Unauthorized request");
     }
 
+    console.log(accessToken, "access token");
+
     const decodedToken = jwt.verify(
       accessToken,
       ACCESS_TOKEN_SECRET!
     ) as JwtPayload;
 
     const user = await User.findById(decodedToken?._id);
+    console.log(user?._id, "user");
 
     if (!user) {
       throw new ApiError(401, "Invalid access token");
