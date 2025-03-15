@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import LandingPage from "./page/LandingPage";
 import LoginPage from "./page/LoginPage";
 import NotFoundPage from "./page/NotFoundPage";
 import PrivateRoutes from "./routes/PrivateRoutes";
@@ -26,7 +25,6 @@ function App() {
     <div>
       <Toaster position="top-right" />
       <Routes>
-        <Route index element={<LandingPage />} />
         <Route element={<PublicRoutes />}>
           <Route path="/login" element={<LoginPage />} />
         </Route>

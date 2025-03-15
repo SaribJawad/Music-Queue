@@ -28,7 +28,6 @@ export const useGetUser = () => {
     queryKey: ["user"],
     queryFn: async (): Promise<GetUserResponse> => {
       dispatch(setAuthStart());
-
       try {
         const response = await api.get("/auth/get-user");
         const parsedData = GetUserResponseSchema.parse(response.data);

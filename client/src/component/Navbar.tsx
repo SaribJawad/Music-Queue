@@ -87,11 +87,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
   const renderLeftContent = () => {
     switch (variant) {
       case "guest":
-        return (
-          <Button onClick={() => navigate(-1)} size="sm">
-            Go Back
-          </Button>
-        );
+        return <h1>MusicQueue</h1>;
 
       case "stream":
         return (

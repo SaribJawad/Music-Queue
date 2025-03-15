@@ -6,7 +6,8 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 export const api = axios.create({
   // baseURL: config.apiUrl,
-  baseURL: "http://localhost:3000/api/v1",
+  //   baseURL: "http://localhost:3000/api/v1",
+  baseURL: "https://music-queue.onrender.com/api/v1",
   withCredentials: true,
 });
 
