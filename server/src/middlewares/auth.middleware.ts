@@ -1,7 +1,7 @@
-import { ACCESS_TOKEN_SECRET } from "@/config/config";
-import { User } from "@/models/user.model";
-import { ApiError } from "@/utils/ApiError";
-import { asyncHandler } from "@/utils/asyncHandler";
+import { ACCESS_TOKEN_SECRET } from "../config/config";
+import { User } from "../models/user.model";
+import { ApiError } from "../utils/ApiError";
+import { asyncHandler } from "../utils/asyncHandler";
 import jwt from "jsonwebtoken";
 
 interface JwtPayload extends jwt.JwtPayload {

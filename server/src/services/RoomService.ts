@@ -1,20 +1,20 @@
 import mongoose, { ObjectId, Types } from "mongoose";
-import { Room } from "@/models/room.model.js";
-import { Song } from "@/models/song.model.js";
-import { User } from "@/models/user.model.js";
+import { Room } from "../models/room.model.js";
+import { Song } from "../models/song.model.js";
+import { User } from "../models/user.model.js";
 import {
   AddSongSchema,
   DeleteSongSchema,
   extractedSongSchema,
   UpVoteSongSchema,
-} from "@/schema/songSchemas.js";
+} from "../schema/songSchemas.js";
 import {
   CreateRoomSchema,
   JoinRoomSchema,
   RefreshJoinRoomSchema,
-} from "@/schema/roomSchemas.js";
-import { ApiError } from "@/utils/ApiError.js";
-import { extractYouTubeID } from "@/utils/extractYoutubeId.js";
+} from "../schema/roomSchemas.js";
+import { ApiError } from "../utils/ApiError.js";
+import { extractYouTubeID } from "../utils/extractYoutubeId.js";
 import { WebSocket } from "ws";
 // @ts-ignore
 import youtubesearchapi from "youtube-search-api";
