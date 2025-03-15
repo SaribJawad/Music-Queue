@@ -1,8 +1,8 @@
+import { Room } from "@/models/room.model";
+import { ApiError } from "@/utils/ApiError";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { asyncHandler } from "@/utils/asyncHandler";
 import mongoose, { isValidObjectId } from "mongoose";
-import { IRoom, Room } from "src/models/room.model.js";
-import { asyncHandler } from "src/utils/asyncHandler.js";
-import { ApiResponse } from "src/utils/ApiResponse.js";
-import { ApiError } from "src/utils/ApiError.js";
 
 const getAllRooms = asyncHandler(async (req, res) => {
   try {

@@ -1,6 +1,6 @@
-import { getAllRooms, getSongQueue, getRoom, } from "src/controllers/room.controller.js";
+import { getAllRooms, getSongQueue, getRoom, } from "../controllers/room.controller.js";
 import { Router } from "express";
-import { verifyJWT } from "src/middlewares/auth.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 // router.post("/create-room", verifyJWT, createRoom);
 router.get("/get-all-rooms", verifyJWT, getAllRooms);

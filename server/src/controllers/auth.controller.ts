@@ -1,13 +1,13 @@
 import { Profile } from "passport-google-oauth20";
-import { IUser, User } from "src/models/user.model.js";
-import { ApiError } from "src/utils/ApiError.js";
-import { ApiResponse } from "src/utils/ApiResponse.js";
-import { asyncHandler } from "src/utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
-import { REFRESH_TOKEN_SECRET } from "src/config/config.js";
-import { Room } from "src/models/room.model.js";
 import { ObjectId } from "mongoose";
 import mongoose from "mongoose";
+import { IUser, User } from "@/models/user.model";
+import { ApiError } from "@/utils/ApiError";
+import { asyncHandler } from "@/utils/asyncHandler";
+import { REFRESH_TOKEN_SECRET } from "@/config/config";
+import { ApiResponse } from "@/utils/ApiResponse";
+import { Room } from "@/models/room.model";
 
 const generateAccessAndRefreshToken = async (
   userId: ObjectId

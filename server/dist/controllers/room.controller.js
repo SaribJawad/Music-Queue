@@ -7,11 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Room } from "../models/room.model";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
 import mongoose from "mongoose";
-import { Room } from "src/models/room.model.js";
-import { asyncHandler } from "src/utils/asyncHandler.js";
-import { ApiResponse } from "src/utils/ApiResponse.js";
-import { ApiError } from "src/utils/ApiError.js";
 const getAllRooms = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const rooms = yield Room.aggregate([

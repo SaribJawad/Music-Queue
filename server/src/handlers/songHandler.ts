@@ -3,9 +3,9 @@ import {
   DeleteSongSchema,
   PlayNextSongSchema,
   UpVoteSongSchema,
-} from "src/schema/songSchemas.js";
-import RoomService from "src/services/RoomService.js";
-import { ClientMessage } from "src/websocket/WebSocketService.js";
+} from "@/schema/songSchemas";
+import RoomService from "@/services/RoomService";
+import { ClientMessage } from "@/websocket/WebSocketService";
 import { WebSocket } from "ws";
 
 interface IHandleArg {
@@ -148,7 +148,6 @@ export async function handlePlayNextSong({
       wsService.sendMessage(ws, "ERROR", errorMsg);
       return;
     }
-
     const { roomId, songId: songIdFromClient } = parsedPlayNextSongData.data;
 
     const { connectedClients, song } = await RoomService.playNextSong({

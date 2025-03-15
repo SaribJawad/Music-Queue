@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { AddSongSchema, DeleteSongSchema, PlayNextSongSchema, UpVoteSongSchema, } from "src/schema/songSchemas.js";
-import RoomService from "src/services/RoomService.js";
+import { AddSongSchema, DeleteSongSchema, PlayNextSongSchema, UpVoteSongSchema, } from "../schema/songSchemas";
+import RoomService from "../services/RoomService";
 export function handleAddSong(_a) {
     return __awaiter(this, arguments, void 0, function* ({ clientData, ws, wsService }) {
         try {

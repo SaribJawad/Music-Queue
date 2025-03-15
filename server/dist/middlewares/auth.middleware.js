@@ -7,11 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ApiError } from "src/utils/ApiError.js";
-import { asyncHandler } from "src/utils/asyncHandler.js";
+import { ACCESS_TOKEN_SECRET } from "../config/config";
+import { User } from "../models/user.model";
+import { ApiError } from "../utils/ApiError";
+import { asyncHandler } from "../utils/asyncHandler";
 import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN_SECRET } from "src/config/config.js";
-import { User } from "src/models/user.model.js";
 const verifyJWT = asyncHandler((req, _, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {

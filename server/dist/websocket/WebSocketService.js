@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import jwt from "jsonwebtoken";
 import * as cookie from "cookie";
 import { WebSocket, WebSocketServer } from "ws";
-import { ACCESS_TOKEN_SECRET } from "src/config/config.js";
-import { handleCreateRoom, handleEndRoom, handleJoinRoom, handleLeaveRoom, handleRefreshJoinRoom, handleSyncAll, handleTimeStamps, } from "src/handlers/roomHandler.js";
-import { handleAddSong, handleDeleteSong, handlePlayNextSong, handleUpVoteSong, } from "src/handlers/songHandler.js";
-import { User } from "src/models/user.model.js";
-import { Room } from "src/models/room.model.js";
-import { Song } from "src/models/song.model.js";
-import RoomService from "src/services/RoomService.js";
+import { ACCESS_TOKEN_SECRET } from "../config/config.js";
+import { handleCreateRoom, handleEndRoom, handleJoinRoom, handleLeaveRoom, handleRefreshJoinRoom, handleSyncAll, handleTimeStamps, } from "../handlers/roomHandler.js";
+import { handleAddSong, handleDeleteSong, handlePlayNextSong, handleUpVoteSong, } from "../handlers/songHandler.js";
+import { User } from "../models/user.model.js";
+import { Room } from "../models/room.model.js";
+import { Song } from "../models/song.model.js";
+import RoomService from "../services/RoomService.js";
 class WebSocketService {
     constructor(server) {
         this.timeouts = new Map();

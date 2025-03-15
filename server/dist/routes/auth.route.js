@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
-import { getUserInfo, handelGoogleLogout, handleGoogleLogin, refreshAcccessToken, } from "src/controllers/auth.controller.js";
-import { verifyJWT } from "src/middlewares/auth.middleware.js";
+import { getUserInfo, handelGoogleLogout, handleGoogleLogin, refreshAcccessToken, } from "../controllers/auth.controller.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = Router();
 router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 router.post("/refresh-token", refreshAcccessToken);

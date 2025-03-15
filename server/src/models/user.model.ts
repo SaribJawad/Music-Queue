@@ -6,7 +6,7 @@ import {
   ACCESS_TOKEN_EXPIRY,
   REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN_EXPIRY,
-} from "src/config/config";
+} from "@/config/config";
 
 export interface IUser extends Document {
   _id: ObjectId;
