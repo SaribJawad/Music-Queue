@@ -4,9 +4,12 @@ import Navbar from "../component/Navbar";
 
 function LoginPage() {
   const handleLogin = () => {
-    window.location.href =
-      //   "https://music-queue.onrender.com/api/v1/auth/google";
-      "http://localhost:3000/api/v1/auth/google";
+    const baseURL =
+      window.location.hostname === "localhost"
+        ? "http://localhost:3000"
+        : "https://music-queue.onrender.com";
+
+    window.location.href = `${baseURL}/api/v1/auth/google`;
   };
 
   return (
