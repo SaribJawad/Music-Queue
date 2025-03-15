@@ -88,7 +88,6 @@ const refreshAcccessToken = asyncHandler(async (req, res) => {
 
 const handleGoogleLogin = asyncHandler(async (req, res) => {
   const { id: googleId } = req.user as Profile;
-
   const user = await User.findOne({ googleId }).select("-refreshToken");
 
   if (!user) {
@@ -99,8 +98,6 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
     user._id
   );
 
-  console.log(accessToken);
-
   const isProduction = process.env.NODE_ENV === "production";
 
   const options = {
@@ -110,6 +107,13 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
 
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
+  //   const options = {
+  //     httpOnly: true,
+  // secure: isProduction,
+  // sameSite: isProduction ? "none" : ("lax" as "none" | "lax"),
+
+  //     maxAge: 7 * 24 * 60 * 60 * 1000,
+  //   };
 
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);

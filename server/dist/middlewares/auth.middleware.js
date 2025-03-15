@@ -14,17 +14,14 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 const verifyJWT = asyncHandler((req, _, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    console.log(req.cookies, "cookies");
     try {
         const accessToken = req.cookies.accessToken ||
             ((_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", ""));
         if (!accessToken) {
             new ApiError(401, "Unauthorized request");
         }
-        console.log(accessToken, "access token");
         const decodedToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
         const user = yield User.findById(decodedToken === null || decodedToken === void 0 ? void 0 : decodedToken._id);
-        console.log(user === null || user === void 0 ? void 0 : user._id, "user");
         if (!user) {
             throw new ApiError(401, "Invalid access token");
         }
