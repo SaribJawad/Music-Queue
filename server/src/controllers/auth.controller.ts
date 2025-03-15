@@ -106,7 +106,8 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: isProduction,
-    // sameSite: "none",
+    sameSite: isProduction ? "none" : ("lax" as "none" | "lax"),
+
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
 

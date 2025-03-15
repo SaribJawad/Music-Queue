@@ -12,6 +12,7 @@ interface JwtPayload extends jwt.JwtPayload {
 }
 
 const verifyJWT = asyncHandler(async (req, _, next) => {
+  console.log(req.cookies, "cookies");
   try {
     const accessToken =
       req.cookies.accessToken ||
