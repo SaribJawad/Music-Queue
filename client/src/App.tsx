@@ -26,7 +26,7 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route element={<PublicRoutes />}>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/" element={<LoginPage />} />
         </Route>
         <Route element={<PrivateRoutes />}>
           <Route element={<WebSocketRoutes />}>

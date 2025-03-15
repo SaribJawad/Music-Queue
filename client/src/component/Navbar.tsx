@@ -78,7 +78,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
 
       dispatch(setLogout());
 
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }

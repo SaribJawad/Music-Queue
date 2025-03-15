@@ -32,7 +32,7 @@ api.interceptors.response.use(
   (response) => response,
 
   async (error: AxiosError) => {
-    if (window.location.pathname === "/login") {
+    if (window.location.pathname === "/") {
       return Promise.reject(error);
     }
 
@@ -69,7 +69,7 @@ api.interceptors.response.use(
 
         // Only redirect for auth-related errors
         if (error instanceof AxiosError && error.response?.status === 401) {
-          window.location.href = "/login";
+          window.location.href = "/";
         }
 
         return Promise.reject(error);

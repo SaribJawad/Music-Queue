@@ -54,7 +54,7 @@ export const useGetUser = () => {
     refetchOnWindowFocus: false,
   });
 
-  return location.pathname === "/login"
+  return location.pathname === "/"
     ? { data: null, isLoading: false, error: null }
     : query;
 };

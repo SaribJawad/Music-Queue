@@ -10,7 +10,7 @@ function PrivateRoutes() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     } else if (isLive && isAuthenticated) {
       navigate(`/room/${userInfo?.rooms[0]}`, { replace: true });
     } else if (isJoined.status && isAuthenticated) {
