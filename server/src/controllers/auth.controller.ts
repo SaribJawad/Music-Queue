@@ -117,6 +117,11 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
+  res.json({
+    success: true,
+    token: accessToken,
+  });
+
   return res.redirect("https://sync-sphere-eight.vercel.app/room");
 });
 
@@ -158,7 +163,7 @@ const getUserInfo = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "User info fetched succesfully"));
+    .json(new ApiResponse(200, { user }, "User info fetched succesfully"));
 });
 
 export {
