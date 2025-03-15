@@ -88,10 +88,10 @@ const handleGoogleLogin = asyncHandler((req, res) => __awaiter(void 0, void 0, v
     //   };
     res.cookie("accessToken", accessToken, options);
     res.cookie("refreshToken", refreshToken, options);
-    res.json({
-        success: true,
-        token: accessToken,
-    });
+    //   res.json({
+    //     success: true,
+    //     token: accessToken,
+    //   });
     return res.redirect("https://sync-sphere-eight.vercel.app/room");
 }));
 const handelGoogleLogout = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
