@@ -15,7 +15,7 @@ import { ApiError } from "../utils/ApiError.js";
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/api/v1/auth/google/callback",
+    callbackURL: "https://music-queue.onrender.com/api/v1/auth/google/callback",
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     const { _json: { name, email, picture: avatar, sub: googleId }, } = profile;
     const user = yield User.findOne({ email });
