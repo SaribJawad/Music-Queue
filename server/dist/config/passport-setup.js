@@ -16,7 +16,7 @@ passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.NODE_ENV === "production"
-        ? "https://music-queue.onrender.com/api/v1/auth/google/callback"
+        ? "https://sync-spheree.onrender.com/api/v1/auth/google/callback"
         : "http://localhost:3000/api/v1/auth/google/callback",
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     const { _json: { name, email, picture: avatar, sub: googleId }, } = profile;

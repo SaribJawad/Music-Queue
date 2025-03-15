@@ -11,7 +11,7 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET!,
       callbackURL:
         process.env.NODE_ENV === "production"
-          ? "https://music-queue.onrender.com/api/v1/auth/google/callback"
+          ? "https://sync-spheree.onrender.com/api/v1/auth/google/callback"
           : "http://localhost:3000/api/v1/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
