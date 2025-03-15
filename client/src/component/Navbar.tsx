@@ -87,7 +87,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
   const renderLeftContent = () => {
     switch (variant) {
       case "guest":
-        return <h1>MusicQueue</h1>;
+        return <h1>SyncSphere</h1>;
 
       case "stream":
         return (
