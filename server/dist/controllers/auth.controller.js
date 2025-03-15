@@ -73,8 +73,11 @@ const handleGoogleLogin = asyncHandler((req, res) => __awaiter(void 0, void 0, v
         throw new ApiError(401, "Authentication failed");
     }
     const { accessToken, refreshToken } = yield generateAccessAndRefreshToken(user._id);
+    console.log(accessToken);
+    const isProduction = process.env.NODE_ENV === "production";
     const options = {
         httpOnly: true,
+        secure: isProduction,
         // sameSite: "none",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };

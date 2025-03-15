@@ -10,7 +10,9 @@ passport.use(
       clientID: GOOGLE_CLIENT_ID!,
       clientSecret: GOOGLE_CLIENT_SECRET!,
       callbackURL:
-        "https://music-queue.onrender.com/api/v1/auth/google/callback",
+        process.env.NODE_ENV === "production"
+          ? "https://music-queue.onrender.com/api/v1/auth/google/callback"
+          : "http://localhost:3000/api/v1/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       const {
