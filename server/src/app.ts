@@ -12,19 +12,13 @@ app.use(helmet());
 
 app.use(
   cors({
-    // origin: process.env.CLIENT_URL || "http://localhost:3000",
-    origin: ["https://sync-sphere-eight.vercel.app", "http://localhost:5173"],
-    credentials: true, // Allow cookies & auth headers
-    allowedHeaders: ["Content-Type", "Authorization"], // Explicitly allow headers
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
+    origin: "https://sync-sphere-eight.vercel.app",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+app.options("*", cors());
 
 app.use(cookieParser());
 

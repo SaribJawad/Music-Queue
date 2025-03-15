@@ -16,11 +16,9 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
     const accessToken =
       req.cookies.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
-
     if (!accessToken) {
-      new ApiError(401, "Unauthorized request");
+      throw new ApiError(401, "Unauthorized request");
     }
-
     const decodedToken = jwt.verify(
       accessToken,
       ACCESS_TOKEN_SECRET!
