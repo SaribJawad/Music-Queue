@@ -4,10 +4,11 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 export const api = axios.create({
   // baseURL: config.apiUrl,
   //   baseURL: "http://localhost:3000/api/v1",
-  baseURL: "https://music-queue.onrender.com/api/v1",
+  baseURL: API_URL,
   withCredentials: true,
 });
 

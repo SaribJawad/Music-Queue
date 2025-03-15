@@ -4,12 +4,13 @@ import Navbar from "../component/Navbar";
 
 function LoginPage() {
   const handleLogin = () => {
+    const API_URL = import.meta.env.VITE_API_BASE_URL;
     const baseURL =
       window.location.hostname === "localhost"
-        ? "http://localhost:3000"
-        : "https://music-queue.onrender.com";
+        ? "http://localhost:3000/api/v1/auth/google"
+        : API_URL;
 
-    window.location.href = `${baseURL}/api/v1/auth/google`;
+    window.location.href = baseURL;
   };
 
   return (
