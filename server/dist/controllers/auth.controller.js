@@ -9,12 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import { User } from "../models/user.model";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
-import { REFRESH_TOKEN_SECRET } from "../config/config";
-import { ApiResponse } from "../utils/ApiResponse";
-import { Room } from "../models/room.model";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { REFRESH_TOKEN_SECRET } from "../config/config.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { Room } from "../models/room.model.js";
 const generateAccessAndRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User.findById(userId);

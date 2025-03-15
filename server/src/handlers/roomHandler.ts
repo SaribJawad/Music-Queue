@@ -3,9 +3,9 @@ import {
   JoinRoomSchema,
   objectIdRegex,
   RefreshJoinRoomSchema,
-} from "../schema/roomSchemas";
-import RoomService from "../services/RoomService";
-import { ClientMessage } from "../websocket/WebSocketService";
+} from "../schema/roomSchemas.js";
+import RoomService from "../services/RoomService.js";
+import { ClientMessage } from "../websocket/WebSocketService.js";
 import { WebSocket } from "ws";
 import { z } from "zod";
 

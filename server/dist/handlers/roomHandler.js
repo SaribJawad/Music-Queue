@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { CreateRoomSchema, JoinRoomSchema, objectIdRegex, RefreshJoinRoomSchema, } from "../schema/roomSchemas";
-import RoomService from "../services/RoomService";
+import { CreateRoomSchema, JoinRoomSchema, objectIdRegex, RefreshJoinRoomSchema, } from "../schema/roomSchemas.js";
+import RoomService from "../services/RoomService.js";
 import { z } from "zod";
 export function handleCreateRoom(_a) {
     return __awaiter(this, arguments, void 0, function* ({ ws, clientData, wsService, }) {
