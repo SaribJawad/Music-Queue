@@ -12,17 +12,19 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: [
-      "https://sync-sphere-eight.vercel.app",
-      "https://sync-sphere.onrender.com",
-    ],
+    origin: "https://sync-sphere-eight.vercel.app",
+
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "Access-Control-Allow-Origin",
       "Content-Type",
       "Authorization",
+      "Origin",
+      "X-Requested-With",
+      "Accept",
     ],
+    exposedHeaders: ["Access-Control-Allow-Credentials"],
   })
 );
 app.options("*", cors());
