@@ -106,21 +106,9 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
     sameSite: "none" as const,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
-  //   const options = {
-  //     httpOnly: true,
-  // secure: isProduction,
-  // sameSite: isProduction ? "none" : ("lax" as "none" | "lax"),
-
-  //     maxAge: 7 * 24 * 60 * 60 * 1000,
-  //   };
 
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
-
-  //   res.json({
-  //     success: true,
-  //     token: accessToken,
-  //   });
 
   return res.redirect("https://sync-sphere-eight.vercel.app/room");
 });
