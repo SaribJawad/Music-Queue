@@ -105,6 +105,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
     secure: isProduction,
     sameSite: "none" as const,
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    domain: "sync-spheree.onrender.com",
   };
   //   const options = {
   //     httpOnly: true,
