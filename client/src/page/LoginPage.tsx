@@ -4,12 +4,13 @@ import Navbar from "../component/Navbar";
 
 function LoginPage() {
   const handleLogin = () => {
-    const API_URL = import.meta.env.VITE_API_BASE_URL;
-    const baseURL =
-      window.location.hostname === "localhost"
-        ? "http://localhost:3000/api/v1/auth/google"
-        : `${API_URL}/auth/google`;
+    // const API_URL = import.meta.env.VITE_API_BASE_URL;
+    // const baseURL =
+    //   window.location.hostname === "localhost"
+    //     ? "http://localhost:3000/api/v1/auth/google"
+    //     : `${API_URL}/auth/google`;
 
+    const baseURL = "/api/v1/auth/google";
     window.location.href = baseURL;
   };
 
