@@ -5,8 +5,10 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
+const LOCAL_API_URL = import.meta.env.VITE_API_BASE_URL_LOCAL;
+
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: import.meta.env.MODE === "development" ? LOCAL_API_URL : API_URL,
   withCredentials: true,
 });
 
