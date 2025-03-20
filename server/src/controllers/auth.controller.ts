@@ -5,7 +5,12 @@ import mongoose from "mongoose";
 import { IUser, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { NODE_ENV, REFRESH_TOKEN_SECRET } from "../config/config.js";
+import {
+  FRONTEND_URL,
+  NODE_ENV,
+  PROD_FRONTEND_URL,
+  REFRESH_TOKEN_SECRET,
+} from "../config/config.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Room } from "../models/room.model.js";
 
@@ -57,6 +62,7 @@ const refreshAcccessToken = asyncHandler(async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "none" as const,
     };
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -103,17 +109,24 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "none" as const,
+    // secure: true,
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
 
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
+  //   const redirectUrl =
+  //     NODE_ENV === "development"
+  //       ? "http://localhost:5173/room"
+  //       : "https://sync-sphere-eight.vercel.app/room";
+
   const redirectUrl =
     NODE_ENV === "development"
-      ? "http://localhost:5173/room"
-      : "https://sync-sphere-eight.vercel.app/room";
+      ? `${FRONTEND_URL}/room`
+      : `${PROD_FRONTEND_URL}/room`;
+
   return res.redirect(redirectUrl);
 });
 

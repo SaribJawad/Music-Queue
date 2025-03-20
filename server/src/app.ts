@@ -12,7 +12,7 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
 
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
@@ -42,6 +42,7 @@ import roomRouter from "./routes/room.route.js";
 // import songRouter from "./routes/song.route";
 import errorHandler from "./middlewares/errorHandler.middleware.js";
 import WebSocketService from "./websocket/WebSocketService.js";
+import { FRONTEND_URL, NODE_ENV, PROD_FRONTEND_URL } from "./config/config.js";
 
 //  routes declaration
 
