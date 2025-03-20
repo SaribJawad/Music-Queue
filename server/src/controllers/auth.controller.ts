@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import { IUser, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { REFRESH_TOKEN_SECRET } from "../config/config.js";
+import { NODE_ENV, REFRESH_TOKEN_SECRET } from "../config/config.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Room } from "../models/room.model.js";
 
@@ -102,8 +102,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    // secure: isProduction,
-    secure: true,
+    secure: isProduction,
     sameSite: "none" as const,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
@@ -111,7 +110,11 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
-  return res.redirect("https://sync-sphere-eight.vercel.app/room");
+  const redirectUrl =
+    NODE_ENV === "development"
+      ? "http://localhost:5173/room"
+      : "https://sync-sphere-eight.vercel.app/room";
+  return res.redirect(redirectUrl);
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {
