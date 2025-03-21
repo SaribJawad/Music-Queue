@@ -167,19 +167,15 @@ class RoomService {
 
       const extractedId = extractYouTubeID(songUrl);
 
-      const {
-        id,
-        title,
-        channel,
-        thumbnail: { thumbnails },
-      } = await youtubesearchapi.GetVideoDetails(extractedId);
+      const { id, title, channel } = await youtubesearchapi.GetVideoDetails(
+        extractedId
+      );
 
       const validatedData = extractedSongSchema.parse({
         externalId: id,
         title,
         source: room.roomType,
         artist: channel,
-        coverImageUrl: thumbnails ? thumbnails[thumbnails.length - 1].url : "",
         room: roomId,
       });
 
