@@ -1,5 +1,8 @@
 import express, { Express } from "express";
 import cors from "cors";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
+import WebSocketService from "./websocket/WebSocketService.js";
+import { FRONTEND_URL, NODE_ENV, PROD_FRONTEND_URL } from "./config/config.js";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import passport from "passport";
@@ -40,9 +43,6 @@ app.use(passport.initialize());
 import authRouter from "./routes/auth.route.js";
 import roomRouter from "./routes/room.route.js";
 // import songRouter from "./routes/song.route";
-import errorHandler from "./middlewares/errorHandler.middleware.js";
-import WebSocketService from "./websocket/WebSocketService.js";
-import { FRONTEND_URL, NODE_ENV, PROD_FRONTEND_URL } from "./config/config.js";
 
 //  routes declaration
 
