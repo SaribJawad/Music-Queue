@@ -12,8 +12,8 @@ const app = express();
 app.use(helmet());
 console.log(NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL);
 app.use(cors({
-    origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
-    // origin: "https://sync-sphere-eight.vercel.app/",
+    // origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
+    origin: "https://sync-sphere-eight.vercel.app/",
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [

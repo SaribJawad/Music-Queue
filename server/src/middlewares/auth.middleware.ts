@@ -12,13 +12,11 @@ interface JwtPayload extends jwt.JwtPayload {
 }
 
 const verifyJWT = asyncHandler(async (req, _, next) => {
-  console.log("req object", req);
   try {
     const accessToken =
       req.cookies.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
 
-    console.error(accessToken);
     console.log("access token", accessToken);
 
     if (!accessToken) {
@@ -29,7 +27,7 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
       ACCESS_TOKEN_SECRET!
     ) as JwtPayload;
 
-    // console.log(decodedToken);
+    console.log(decodedToken, "decoded token");
 
     const user = await User.findById(decodedToken?._id);
     // console.log(user);

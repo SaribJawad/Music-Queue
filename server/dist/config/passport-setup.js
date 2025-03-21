@@ -21,7 +21,7 @@ passport.use(new GoogleStrategy({
     callbackURL: 
     // process.env.NODE_ENV === "production"
     //   ?
-    callbackUrl,
+    "https://sync-spheree.onrender.com/api/v1/auth/google/callback",
     //   :
     // "http://localhost:3000/api/v1/auth/google/callback",
     // callbackUrl,
