@@ -28,8 +28,6 @@ export async function handleAddSong({ clientData, ws, wsService }: IHandleArg) {
 
     const { roomId, songUrl } = parsedAddSongData.data;
 
-    console.log("FROM FRONTEND", roomId, songUrl);
-
     const { filteredSong: addedSong, roomUsers } = await RoomService.addSong({
       songUrl,
       roomId,

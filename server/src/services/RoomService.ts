@@ -159,8 +159,6 @@ class RoomService {
 
       const room = await Room.findById(roomId);
 
-      console.log("ROOM FOUND", room);
-
       if (!room) {
         throw new ApiError(404, "Room not found");
       }
@@ -169,7 +167,9 @@ class RoomService {
 
       const extractedId = extractYouTubeID(songUrl);
 
-      console.log("EXTRACTED YOUTUBE ID", extractedId);
+      const checkSong = await youtubesearchapi.GetVideoDetails(extractedId);
+      console.log("checkSong", checkSong);
+      console.log("checkThubnail", checkSong.thumbnail);
 
       const {
         id,
@@ -177,8 +177,6 @@ class RoomService {
         channel,
         thumbnail: { thumbnails },
       } = await youtubesearchapi.GetVideoDetails(extractedId);
-
-      console.log("SONG DATA", id, title, channel, thumbnails);
 
       const validatedData = extractedSongSchema.parse({
         externalId: id,
@@ -188,8 +186,6 @@ class RoomService {
         coverImageUrl: thumbnails[thumbnails.length - 1].url,
         room: roomId,
       });
-
-      console.log("PARSED VALIDATED DATA SONG", validatedData);
 
       const song = await Song.create(validatedData);
       const filteredSong = await Song.findById(song._id)
