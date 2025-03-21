@@ -146,6 +146,8 @@ function YoutubeDisplaySection({
     } else {
       showToast("error", "Something went wrong! Try again.");
     }
+
+    setIsSyncToInfoOpen(false);
   };
 
   //   send timestamps every second
