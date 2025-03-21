@@ -15,6 +15,7 @@ import { ApiError } from "../utils/ApiError.js";
 const callbackUrl = process.env.NODE_ENV === "production"
     ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
     : `${FRONTEND_URL}/api/v1/auth/google/callback`;
+console.log(callbackUrl);
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
@@ -22,8 +23,9 @@ passport.use(new GoogleStrategy({
     // process.env.NODE_ENV === "production"
     //   ?
     // "https://sync-spheree.onrender.com/api/v1/auth/google/callback",
+    callbackUrl,
     //   :
-    "http://localhost:3000/api/v1/auth/google/callback",
+    // "http://localhost:3000/api/v1/auth/google/callback",
     // callbackUrl,
     //   process.env.NODE_ENV === "production"
     //   ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
