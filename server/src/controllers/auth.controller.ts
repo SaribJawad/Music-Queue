@@ -127,7 +127,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
       ? `${FRONTEND_URL}/room`
       : `${PROD_FRONTEND_URL}/room`;
 
-  return res.redirect(redirectUrl);
+  return res.redirect("https://sync-sphere-eight.vercel.app/room");
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {
