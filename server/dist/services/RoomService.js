@@ -116,11 +116,13 @@ class RoomService {
             try {
                 const { roomId, songUrl } = payload;
                 const room = yield Room.findById(roomId);
+                console.log("ROOM FOUND", room);
                 if (!room) {
                     throw new ApiError(404, "Room not found");
                 }
                 const roomUsers = (_a = this.rooms.get(String(room._id))) === null || _a === void 0 ? void 0 : _a.users;
                 const extractedId = extractYouTubeID(songUrl);
+                console.log("EXTRACTED YOUTUBE ID", extractedId);
                 const { id, title, channel, thumbnail: { thumbnails }, } = yield youtubesearchapi.GetVideoDetails(extractedId);
                 const validatedData = extractedSongSchema.parse({
                     externalId: id,
@@ -130,6 +132,7 @@ class RoomService {
                     coverImageUrl: thumbnails[thumbnails.length - 1].url,
                     room: roomId,
                 });
+                console.log("PARSED VALIDATED DATA SONG", validatedData);
                 const song = yield Song.create(validatedData);
                 const filteredSong = yield Song.findById(song._id)
                     .select("-createdAt -updatedAt -__v")

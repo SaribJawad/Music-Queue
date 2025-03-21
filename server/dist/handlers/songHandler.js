@@ -21,6 +21,7 @@ export function handleAddSong(_a) {
                 return;
             }
             const { roomId, songUrl } = parsedAddSongData.data;
+            console.log("FROM FRONTEND", roomId, songUrl);
             const { filteredSong: addedSong, roomUsers } = yield RoomService.addSong({
                 songUrl,
                 roomId,
