@@ -9,11 +9,6 @@ import {
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 
-const callbackUrl =
-  process.env.NODE_ENV === "production"
-    ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
-    : `${FRONTEND_URL}/api/v1/auth/google/callback`;
-console.log(callbackUrl);
 passport.use(
   new GoogleStrategy(
     {

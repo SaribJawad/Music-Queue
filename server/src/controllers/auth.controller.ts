@@ -117,17 +117,14 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
-  //   const redirectUrl =
-  //     NODE_ENV === "development"
-  //       ? "http://localhost:5173/room"
-  //       : "https://sync-sphere-eight.vercel.app/room";
-
   const redirectUrl =
     NODE_ENV === "development"
       ? `${FRONTEND_URL}/room`
       : `${PROD_FRONTEND_URL}/room`;
 
-  return res.redirect(redirectUrl);
+  console.log(redirectUrl, "redirectUrl");
+
+  return res.redirect("https://sync-sphere-eight.vercel.app/room");
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {

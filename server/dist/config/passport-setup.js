@@ -9,13 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { FRONTEND_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PROD_FRONTEND_URL, } from "./config.js";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, } from "./config.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
-const callbackUrl = process.env.NODE_ENV === "production"
-    ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
-    : `${FRONTEND_URL}/api/v1/auth/google/callback`;
-console.log(callbackUrl);
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
