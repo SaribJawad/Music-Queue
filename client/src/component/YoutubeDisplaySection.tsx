@@ -138,6 +138,7 @@ function YoutubeDisplaySection({
 
     const sent = sendMessage({ timestamps, roomId }, "SYNC_ALL");
     if (sent) {
+      setIsSyncToInfoOpen(false);
       return;
     } else if (isConnected) {
       console.warn(
@@ -146,8 +147,6 @@ function YoutubeDisplaySection({
     } else {
       showToast("error", "Something went wrong! Try again.");
     }
-
-    setIsSyncToInfoOpen(false);
   };
 
   //   send timestamps every second
