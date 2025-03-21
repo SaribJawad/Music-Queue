@@ -31,7 +31,7 @@ export const useGetUser = () => {
       try {
         const response = await api.get("/auth/get-user", {
           headers: {
-            Authorization: `Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2M4MWVlYWViMWYyYzhkZjFjZjVhNmMiLCJnb29nbGVJZCI6IjExMDg5NDgwMDA5OTE3MTQ3NzMwOSIsImVtYWlsIjoic2FyaWJzcGFtQGdtYWlsLmNvbSIsIm5hbWUiOiJST0ZMIExNQU9sT0wiLCJpYXQiOjE3NDI1MjE5NzIsImV4cCI6MTc0MjYwODM3Mn0.0l9nDf-4iC2e6UuJLE7uCQKuk19sz9-qoIDFYAU3uaY`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2M4MWVlYWViMWYyYzhkZjFjZjVhNmMiLCJnb29nbGVJZCI6IjExMDg5NDgwMDA5OTE3MTQ3NzMwOSIsImVtYWlsIjoic2FyaWJzcGFtQGdtYWlsLmNvbSIsIm5hbWUiOiJST0ZMIExNQU9sT0wiLCJpYXQiOjE3NDI1MjE5NzIsImV4cCI6MTc0MjYwODM3Mn0.0l9nDf-4iC2e6UuJLE7uCQKuk19sz9-qoIDFYAU3uaY`,
           },
         });
 
