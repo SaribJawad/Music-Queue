@@ -66,7 +66,7 @@ export const WebSocketProvider = ({
     const url =
       import.meta.env.MODE === "development"
         ? "ws://localhost:3000"
-        : "wss://sync-sphere-eight.vercel.app";
+        : "wss://sync-spheree.onrender.com";
 
     const socket = new WebSocket(url);
     socketRef.current = socket;
