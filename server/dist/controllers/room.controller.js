@@ -157,7 +157,6 @@ const getSongQueue = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0
                 songQueue: {
                     externalId: 1,
                     title: 1,
-                    coverImageUrl: 1,
                     artist: 1,
                     source: 1,
                     vote: 1,

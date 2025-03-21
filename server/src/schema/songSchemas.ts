@@ -7,7 +7,6 @@ const youtubeRegex =
 export const extractedSongSchema = z.object({
   externalId: z.string().min(1, "External ID is required"),
   title: z.string().min(1, "Title is required"),
-  coverImageUrl: z.string().url("Invalid cover image URL"),
   artist: z.string(),
   source: z.enum(["soundcloud", "youtube"]),
   room: z.string().regex(objectIdRegex, "Invalid MongoDB ObjectID"),

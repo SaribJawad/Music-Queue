@@ -6,7 +6,6 @@ type Source = "youtube" | "soundcloud";
 export interface ISong extends Document {
   externalId: string;
   title: string;
-  coverImageUrl: string;
   source: Source;
   vote: Types.ObjectId[];
   noOfVote: number;
@@ -25,10 +24,7 @@ const songSchema: Schema<ISong> = new Schema(
       type: String,
       required: true,
     },
-    coverImageUrl: {
-      type: String,
-      requried: true,
-    },
+
     artist: {
       type: String,
       required: true,

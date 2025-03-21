@@ -9,10 +9,6 @@ const songSchema = new Schema({
         type: String,
         required: true,
     },
-    coverImageUrl: {
-        type: String,
-        requried: true,
-    },
     artist: {
         type: String,
         required: true,
