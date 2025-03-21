@@ -11,21 +11,23 @@ import http from "http";
 const app = express();
 app.use(helmet());
 console.log(NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL);
-app.use(cors({
+app.use(
+  cors({
     // origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
-    origin: "https://sync-sphere-eight.vercel.app/",
+    origin: "https://sync-sphere-eight.vercel.app",
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
     allowedHeaders: [
-        //   "Access-Control-Allow-Origin",
-        "Content-Type",
-        "Authorization",
-        "Origin",
-        "X-Requested-With",
-        "Accept",
+      //   "Access-Control-Allow-Origin",
+      "Content-Type",
+      "Authorization",
+      "Origin",
+      "X-Requested-With",
+      "Accept",
     ],
     // exposedHeaders: ["Access-Control-Allow-Credentials"],
-}));
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
