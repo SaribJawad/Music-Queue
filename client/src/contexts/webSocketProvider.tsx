@@ -63,7 +63,12 @@ export const WebSocketProvider = ({
 
   useEffect(() => {
     console.log("Setting up WebSocket connection");
-    const socket = new WebSocket("ws://localhost:3000");
+    const url =
+      import.meta.env.MODE === "development"
+        ? "ws://localhost:3000"
+        : "wss://sync-sphere-eight.vercel.app";
+
+    const socket = new WebSocket(url);
     socketRef.current = socket;
 
     socket.onopen = () => {
