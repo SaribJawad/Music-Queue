@@ -121,9 +121,9 @@ class RoomService {
                 }
                 const roomUsers = (_a = this.rooms.get(String(room._id))) === null || _a === void 0 ? void 0 : _a.users;
                 const extractedId = extractYouTubeID(songUrl);
-                const { id, title, channel } = yield youtubesearchapi.GetVideoDetails(extractedId);
+                const { title, channel } = yield youtubesearchapi.GetVideoDetails(extractedId);
                 const validatedData = extractedSongSchema.parse({
-                    externalId: id,
+                    externalId: extractedId,
                     title,
                     source: room.roomType,
                     artist: channel,
