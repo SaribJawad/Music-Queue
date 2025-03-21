@@ -23,13 +23,13 @@ passport.use(new GoogleStrategy({
     // process.env.NODE_ENV === "production"
     //   ?
     // "https://sync-spheree.onrender.com/api/v1/auth/google/callback",
-    callbackUrl,
+    // callbackUrl,
     //   :
     // "http://localhost:3000/api/v1/auth/google/callback",
     // callbackUrl,
-    //   process.env.NODE_ENV === "production"
-    //   ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
-    //   : `${FRONTEND_URL}/api/v1/auth/google/callback`,
+    process.env.NODE_ENV === "production"
+        ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
+        : `${FRONTEND_URL}/api/v1/auth/google/callback`,
 }, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
     const { _json: { name, email, picture: avatar, sub: googleId }, } = profile;
     const user = yield User.findOne({ email });
