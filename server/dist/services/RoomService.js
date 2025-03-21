@@ -121,16 +121,13 @@ class RoomService {
                 }
                 const roomUsers = (_a = this.rooms.get(String(room._id))) === null || _a === void 0 ? void 0 : _a.users;
                 const extractedId = extractYouTubeID(songUrl);
-                const checkSong = yield youtubesearchapi.GetVideoDetails(extractedId);
-                console.log("checkSong", checkSong);
-                console.log("checkThubnail", checkSong.thumbnail);
                 const { id, title, channel, thumbnail: { thumbnails }, } = yield youtubesearchapi.GetVideoDetails(extractedId);
                 const validatedData = extractedSongSchema.parse({
                     externalId: id,
                     title,
                     source: room.roomType,
                     artist: channel,
-                    coverImageUrl: thumbnails[thumbnails.length - 1].url,
+                    coverImageUrl: thumbnails ? thumbnails[thumbnails.length - 1].url : "",
                     room: roomId,
                 });
                 const song = yield Song.create(validatedData);

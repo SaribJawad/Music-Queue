@@ -167,10 +167,6 @@ class RoomService {
 
       const extractedId = extractYouTubeID(songUrl);
 
-      const checkSong = await youtubesearchapi.GetVideoDetails(extractedId);
-      console.log("checkSong", checkSong);
-      console.log("checkThubnail", checkSong.thumbnail);
-
       const {
         id,
         title,
@@ -183,7 +179,7 @@ class RoomService {
         title,
         source: room.roomType,
         artist: channel,
-        coverImageUrl: thumbnails[thumbnails.length - 1].url,
+        coverImageUrl: thumbnails ? thumbnails[thumbnails.length - 1].url : "",
         room: roomId,
       });
 
