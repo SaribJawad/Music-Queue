@@ -12,7 +12,7 @@ import mongoose from "mongoose";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { REFRESH_TOKEN_SECRET } from "../config/config.js";
+import { FRONTEND_URL, NODE_ENV, PROD_FRONTEND_URL, REFRESH_TOKEN_SECRET, } from "../config/config.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Room } from "../models/room.model.js";
 const generateAccessAndRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -45,6 +45,7 @@ const refreshAcccessToken = asyncHandler((req, res) => __awaiter(void 0, void 0,
         const options = {
             httpOnly: true,
             secure: true,
+            sameSite: "none",
         };
         const { accessToken, refreshToken } = yield generateAccessAndRefreshToken(user._id);
         return res
@@ -77,22 +78,20 @@ const handleGoogleLogin = asyncHandler((req, res) => __awaiter(void 0, void 0, v
     const options = {
         httpOnly: true,
         secure: isProduction,
-        sameSite: "none",
+        // secure: true,
+        sameSite: isProduction ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };
-    //   const options = {
-    //     httpOnly: true,
-    // secure: isProduction,
-    // sameSite: isProduction ? "none" : ("lax" as "none" | "lax"),
-    //     maxAge: 7 * 24 * 60 * 60 * 1000,
-    //   };
     res.cookie("accessToken", accessToken, options);
     res.cookie("refreshToken", refreshToken, options);
-    //   res.json({
-    //     success: true,
-    //     token: accessToken,
-    //   });
-    return res.redirect("https://sync-sphere-eight.vercel.app/room");
+    //   const redirectUrl =
+    //     NODE_ENV === "development"
+    //       ? "http://localhost:5173/room"
+    //       : "https://sync-sphere-eight.vercel.app/room";
+    const redirectUrl = NODE_ENV === "development"
+        ? `${FRONTEND_URL}/room`
+        : `${PROD_FRONTEND_URL}/room`;
+    return res.redirect(redirectUrl);
 }));
 const handelGoogleLogout = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { _id: userId } = req.user;
@@ -122,6 +121,6 @@ const getUserInfo = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0,
     }
     return res
         .status(200)
-        .json(new ApiResponse(200, { user }, "User info fetched succesfully"));
+        .json(new ApiResponse(200, user, "User info fetched succesfully"));
 }));
 export { handleGoogleLogin, handelGoogleLogout, getUserInfo, refreshAcccessToken, };
