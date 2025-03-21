@@ -138,6 +138,7 @@ export const WebSocketProvider = ({
           dispatch(setUserLeaveRoom());
           showToast("error", "Room ended");
           dispatch(setRemoveLiveRoom());
+          dispatch(setEmptySongQueue());
           navigate("/room", { replace: true });
           break;
 
