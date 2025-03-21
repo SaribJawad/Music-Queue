@@ -22,10 +22,10 @@ passport.use(
       callbackURL:
         // process.env.NODE_ENV === "production"
         //   ?
-        "https://sync-spheree.onrender.com/api/v1/auth/google/callback",
+        // "https://sync-spheree.onrender.com/api/v1/auth/google/callback",
 
-      //   :
-      // "http://localhost:3000/api/v1/auth/google/callback",
+        //   :
+        "http://localhost:3000/api/v1/auth/google/callback",
       // callbackUrl,
       //   process.env.NODE_ENV === "production"
       //   ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`

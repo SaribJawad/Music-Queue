@@ -11,27 +11,23 @@ import http from "http";
 
 const app: Express = express();
 
-app.use(helmet());
+// app.use(helmet());
 
 app.use(
   cors({
     // origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
-<<<<<<< HEAD
     origin: "https://sync-sphere-eight.vercel.app",
-=======
-    origin: "https://sync-sphere-eight.vercel.app/",
->>>>>>> parent of b69c114 (update build)
 
     credentials: true,
-    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      //   "Access-Control-Allow-Origin",
-      "Content-Type",
-      "Authorization",
-      "Origin",
-      "X-Requested-With",
-      "Accept",
-    ],
+    // methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    // allowedHeaders: [
+    //   //   "Access-Control-Allow-Origin",
+    //   "Content-Type",
+    //   "Authorization",
+    //   "Origin",
+    //   "X-Requested-With",
+    //   "Accept",
+    // ],
     // exposedHeaders: ["Access-Control-Allow-Credentials"],
   })
 );
