@@ -79,7 +79,6 @@ const handleGoogleLogin = asyncHandler((req, res) => __awaiter(void 0, void 0, v
         httpOnly: true,
         secure: isProduction,
         partitioned: true,
-        // secure: true,
         sameSite: isProduction ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };
@@ -96,7 +95,7 @@ const handleGoogleLogin = asyncHandler((req, res) => __awaiter(void 0, void 0, v
     const redirectUrl = NODE_ENV === "development"
         ? `${FRONTEND_URL}/room`
         : `${PROD_FRONTEND_URL}/room`;
-    return res.redirect(redirectUrl);
+    return res.redirect("https://sync-sphere-eight.vercel.app/room");
 }));
 const handelGoogleLogout = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { _id: userId } = req.user;
