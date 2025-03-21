@@ -178,6 +178,8 @@ class RoomService {
         thumbnail: { thumbnails },
       } = await youtubesearchapi.GetVideoDetails(extractedId);
 
+      console.log("SONG DATA", id, title, channel, thumbnails);
+
       const validatedData = extractedSongSchema.parse({
         externalId: id,
         title,

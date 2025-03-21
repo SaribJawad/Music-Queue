@@ -124,6 +124,7 @@ class RoomService {
                 const extractedId = extractYouTubeID(songUrl);
                 console.log("EXTRACTED YOUTUBE ID", extractedId);
                 const { id, title, channel, thumbnail: { thumbnails }, } = yield youtubesearchapi.GetVideoDetails(extractedId);
+                console.log("SONG DATA", id, title, channel, thumbnails);
                 const validatedData = extractedSongSchema.parse({
                     externalId: id,
                     title,
