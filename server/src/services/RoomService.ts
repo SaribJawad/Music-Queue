@@ -159,6 +159,8 @@ class RoomService {
 
       const room = await Room.findById(roomId);
 
+      console.log("ROOM FOUND", room);
+
       if (!room) {
         throw new ApiError(404, "Room not found");
       }
@@ -166,6 +168,8 @@ class RoomService {
       const roomUsers = this.rooms.get(String(room._id))?.users;
 
       const extractedId = extractYouTubeID(songUrl);
+
+      console.log("EXTRACTED YOUTUBE ID", extractedId);
 
       const {
         id,
@@ -182,6 +186,8 @@ class RoomService {
         coverImageUrl: thumbnails[thumbnails.length - 1].url,
         room: roomId,
       });
+
+      console.log("PARSED VALIDATED DATA SONG", validatedData);
 
       const song = await Song.create(validatedData);
       const filteredSong = await Song.findById(song._id)
