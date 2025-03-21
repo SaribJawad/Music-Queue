@@ -12,11 +12,15 @@ import http from "http";
 const app: Express = express();
 
 app.use(helmet());
-console.log(NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL);
+
 app.use(
   cors({
     // origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
+<<<<<<< HEAD
     origin: "https://sync-sphere-eight.vercel.app",
+=======
+    origin: "https://sync-sphere-eight.vercel.app/",
+>>>>>>> parent of b69c114 (update build)
 
     credentials: true,
     methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
