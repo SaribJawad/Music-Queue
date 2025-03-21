@@ -1,4 +1,5 @@
 import { Profile } from "passport-google-oauth20";
+import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongoose";
 import mongoose from "mongoose";
@@ -13,6 +14,7 @@ import {
 } from "../config/config.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Room } from "../models/room.model.js";
+import { TempCode } from "@/models/tempCode.model.js";
 
 const generateAccessAndRefreshToken = async (
   userId: ObjectId
@@ -109,7 +111,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: isProduction,
-    // secure: true,
+    partitioned: true,
     sameSite: isProduction ? ("none" as const) : ("lax" as const),
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
@@ -117,14 +119,23 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
+  //   const code = uuidv4();
+
+  //   const createdTempCode = await TempCode.create({
+  //     code,
+  //     token: accessToken,
+  //     userId: user._id,
+  //     createdAt: new Date(),
+  //   });
+
+  //   console.log(createdTempCode)
+
   const redirectUrl =
     NODE_ENV === "development"
       ? `${FRONTEND_URL}/room`
       : `${PROD_FRONTEND_URL}/room`;
 
-  console.log(redirectUrl, "redirectUrl");
-
-  return res.redirect("https://sync-sphere-eight.vercel.app/room");
+  return res.redirect(redirectUrl);
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res) => {

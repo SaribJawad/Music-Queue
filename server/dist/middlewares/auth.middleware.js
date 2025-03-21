@@ -17,12 +17,10 @@ const verifyJWT = asyncHandler((req, _, next) => __awaiter(void 0, void 0, void 
     try {
         const accessToken = req.cookies.accessToken ||
             ((_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace("Bearer ", ""));
-        console.log("access token", accessToken);
         if (!accessToken) {
             throw new ApiError(401, "Unauthorized request accessToken not found");
         }
         const decodedToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
-        console.log(decodedToken, "decoded token");
         const user = yield User.findById(decodedToken === null || decodedToken === void 0 ? void 0 : decodedToken._id);
         // console.log(user);
         if (!user) {

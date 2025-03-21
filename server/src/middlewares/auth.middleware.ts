@@ -17,8 +17,6 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
       req.cookies.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
 
-    console.log("access token", accessToken);
-
     if (!accessToken) {
       throw new ApiError(401, "Unauthorized request accessToken not found");
     }
@@ -26,8 +24,6 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
       accessToken,
       ACCESS_TOKEN_SECRET!
     ) as JwtPayload;
-
-    console.log(decodedToken, "decoded token");
 
     const user = await User.findById(decodedToken?._id);
     // console.log(user);

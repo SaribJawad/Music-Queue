@@ -78,17 +78,25 @@ const handleGoogleLogin = asyncHandler((req, res) => __awaiter(void 0, void 0, v
     const options = {
         httpOnly: true,
         secure: isProduction,
+        partitioned: true,
         // secure: true,
         sameSite: isProduction ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     };
     res.cookie("accessToken", accessToken, options);
     res.cookie("refreshToken", refreshToken, options);
+    //   const code = uuidv4();
+    //   const createdTempCode = await TempCode.create({
+    //     code,
+    //     token: accessToken,
+    //     userId: user._id,
+    //     createdAt: new Date(),
+    //   });
+    //   console.log(createdTempCode)
     const redirectUrl = NODE_ENV === "development"
         ? `${FRONTEND_URL}/room`
         : `${PROD_FRONTEND_URL}/room`;
-    console.log(redirectUrl, "redirectUrl");
-    return res.redirect("https://sync-sphere-eight.vercel.app/room");
+    return res.redirect(redirectUrl);
 }));
 const handelGoogleLogout = asyncHandler((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { _id: userId } = req.user;
