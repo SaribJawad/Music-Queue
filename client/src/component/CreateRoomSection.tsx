@@ -6,10 +6,11 @@ import { useWebSocketContext } from "../contexts/webSocketProvider";
 import { showToast } from "../utils/showToast";
 import { useAppSelector } from "../app/hook";
 import { selectUserInfo } from "../features/auth/auth.slice";
+import { useLoadingContext } from "../contexts/loadingActionProvider";
 
 function CreateRoomSection() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
+  const { startLoading } = useLoadingContext();
   const loggedInUser = useAppSelector(selectUserInfo);
   const [roomType, setRoomType] = useState<"youtube" | "soundcloud">();
   const { sendMessage, isConnected } = useWebSocketContext();
@@ -33,6 +34,8 @@ function CreateRoomSection() {
       roomName,
       roomPassword,
     };
+
+    startLoading("createRoom");
 
     const sent = sendMessage(createRoomData, "CREATE_ROOM");
 

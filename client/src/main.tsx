@@ -6,15 +6,18 @@ import "./index.css";
 import App from "./App.tsx";
 import { Provider } from "react-redux";
 import { store } from "./app/store.ts";
+import { LoadingActionProvider } from "./contexts/loadingActionProvider.tsx";
 
 const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <LoadingActionProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </LoadingActionProvider>
       </QueryClientProvider>
     </Provider>
   </StrictMode>

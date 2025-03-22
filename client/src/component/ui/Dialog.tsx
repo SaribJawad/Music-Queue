@@ -1,11 +1,12 @@
 import { motion } from "motion/react";
 import Button from "../Button";
+import React from "react";
 
 interface DialogProps {
   closeDialog: () => void;
   onClickBtn: () => void;
   title: string;
-  btnContent: string;
+  btnContent: React.ReactNode;
 }
 
 function Dialog({ closeDialog, btnContent, title, onClickBtn }: DialogProps) {
@@ -32,7 +33,12 @@ function Dialog({ closeDialog, btnContent, title, onClickBtn }: DialogProps) {
           <Button onClick={() => closeDialog()} type="button" size="sm">
             Cancel
           </Button>
-          <Button onClick={() => onClickBtn()} type="button" size="sm">
+          <Button
+            onClick={() => onClickBtn()}
+            type="button"
+            size="sm"
+            className="flex items-center justify-center"
+          >
             {btnContent}
           </Button>
         </div>

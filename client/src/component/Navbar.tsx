@@ -9,6 +9,8 @@ import { showToast } from "../utils/showToast";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { selectUserInfo, setLogout } from "../features/auth/auth.slice";
 import { api } from "../config/axios";
+import LoadingBar from "./ui/LoadingBar";
+import { useLoadingContext } from "../contexts/loadingActionProvider";
 
 interface NavbarProps {
   variant?: NavbarVariant;
@@ -19,6 +21,8 @@ interface NavbarProps {
 type NavbarVariant = "guest" | "user" | "stream";
 
 const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
+  const { isLoading, startLoading, stopLoading } = useLoadingContext();
+
   const [dialog, setDialog] = useState<
     "logout" | "endRoom" | "leaveRoom" | null
   >(null);
@@ -33,6 +37,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
   };
 
   const handleLeaveRoom = () => {
+    startLoading("leaveRoom");
     const sent = sendMessage(
       { roomId, userId: loggedInUser?._id },
       "LEAVE_ROOM"
@@ -52,6 +57,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
   };
 
   const handleEndRoom = () => {
+    startLoading("endRoom");
     const endRoomPayload = {
       roomId,
       userId: loggedInUser?._id,
@@ -74,11 +80,13 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
 
   const handleLogout = async () => {
     try {
+      startLoading("logout");
+
       await api.post("/auth/google/logout");
 
       dispatch(setLogout());
-
       navigate("/");
+      stopLoading("logout");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -120,7 +128,9 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
               onClickBtn={handleLogout}
               closeDialog={handleDialogClose}
               title="You sure you want to logout"
-              btnContent="Logout"
+              btnContent={
+                isLoading("logout") ? <LoadingBar size="xs" /> : "Logout"
+              }
             />
           )}
           {dialog === "endRoom" && (
@@ -128,7 +138,9 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
               closeDialog={handleDialogClose}
               onClickBtn={handleEndRoom}
               title="You sure you want to end Stream?"
-              btnContent="End rooom"
+              btnContent={
+                isLoading("endRoom") ? <LoadingBar size="xs" /> : "End rooom"
+              }
             />
           )}
           {dialog === "leaveRoom" && (
@@ -136,7 +148,9 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
               closeDialog={handleDialogClose}
               onClickBtn={handleLeaveRoom}
               title="You sure you want to leave Stream?"
-              btnContent="leave room"
+              btnContent={
+                isLoading("leaveRoom") ? <LoadingBar size="xs" /> : "leave room"
+              }
             />
           )}
         </AnimatePresence>

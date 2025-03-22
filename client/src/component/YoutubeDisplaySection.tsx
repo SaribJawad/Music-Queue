@@ -13,6 +13,8 @@ import {
 } from "../features/liveRoom/liveRoom.slice";
 import SyncToInfo from "./SyncToInfo";
 import { selectUserInfo } from "../features/auth/auth.slice";
+import { useLoadingContext } from "../contexts/loadingActionProvider";
+import LoadingBar from "./ui/LoadingBar";
 
 // youtube iframe api types
 declare global {
@@ -31,6 +33,7 @@ function YoutubeDisplaySection({
   currentSong,
   isAdmin,
 }: IYoutubeDisplaySectionProps) {
+  const { isLoading, startLoading } = useLoadingContext();
   const playerContainer = useRef<HTMLDivElement>(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [isSyncToInfoOpen, setIsSyncToInfoOpen] = useState(false);
@@ -55,7 +58,7 @@ function YoutubeDisplaySection({
     // loads the IFrame Player API
     if (!currentSong?.externalId) return;
 
-    if (youtubePlayer.current) {
+    if (youtubePlayer?.current) {
       youtubePlayer.current.loadVideoById(currentSong.externalId);
       return;
     }
@@ -112,6 +115,8 @@ function YoutubeDisplaySection({
       dispatch(setCurrentSong(null));
       return showToast("emoji", "Add more songs in queue to play.");
     }
+
+    startLoading("playNext");
     const sent = sendMessage(
       { songId: songsQueueRef.current[0]._id, roomId },
       "PLAY_NEXT_SONG"
@@ -240,7 +245,7 @@ function YoutubeDisplaySection({
 
         {isAdmin && currentSong && (
           <Button onClick={handlePlayNext} size="sm" className="flex-shrink-0">
-            Play next
+            {isLoading("playNext") ? <LoadingBar size="xs" /> : "Play next"}
           </Button>
         )}
       </div>

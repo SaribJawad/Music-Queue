@@ -7,6 +7,8 @@ import { useWebSocketContext } from "../../contexts/webSocketProvider";
 import { showToast } from "../../utils/showToast";
 import { useAppSelector } from "../../app/hook";
 import { selectUserInfo } from "../../features/auth/auth.slice";
+import { useLoadingContext } from "../../contexts/loadingActionProvider";
+import LoadingBar from "./LoadingBar";
 
 interface CreateStreamDialogProps {
   setIsOpen: (arg: boolean) => void;
@@ -20,6 +22,7 @@ const FormSchema = z.object({
 type IFormData = z.infer<typeof FormSchema>;
 
 function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
+  const { isLoading, startLoading } = useLoadingContext();
   const { isConnected, sendMessage } = useWebSocketContext();
   const loggedInUser = useAppSelector(selectUserInfo);
   const {
@@ -31,6 +34,7 @@ function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
   });
 
   const onSubmit = (data: IFormData) => {
+    startLoading("joinRoom");
     const sent = sendMessage(
       { roomPassword: data.password, roomId, userId: loggedInUser!._id },
       "JOIN_ROOM"
@@ -83,7 +87,7 @@ function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
           </div>
           <div className="flex  justify-center gap-2">
             <Button type="submit" size="sm">
-              Join Room
+              {isLoading("joinRoom") ? <LoadingBar size="xs" /> : "Join Room"}
             </Button>
             <Button onClick={() => setIsOpen(false)} type="button" size="sm">
               Cancel

@@ -3,6 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
 import { z } from "zod";
+import { useLoadingContext } from "../../contexts/loadingActionProvider";
+import LoadingBar from "./LoadingBar";
 
 interface CreateStreamDialogProps {
   setIsOpen: (arg: boolean) => void;
@@ -31,6 +33,7 @@ const CreateStreamDialog = ({
     handleSubmit,
     formState: { errors },
   } = useForm<IFormInput>({ resolver: zodResolver(FormSchema) });
+  const { isLoading } = useLoadingContext();
 
   const onSubmit = (data: IFormInput) => {
     handleCreateRoom(data.name, data.password);
@@ -85,7 +88,11 @@ const CreateStreamDialog = ({
           </div>
           <div className="flex  justify-center gap-2">
             <Button type="submit" size="sm">
-              Create Room
+              {isLoading("createRoom") ? (
+                <LoadingBar size="xs" />
+              ) : (
+                "Create Room"
+              )}
             </Button>
             <Button onClick={() => setIsOpen(false)} type="button" size="sm">
               Cancel

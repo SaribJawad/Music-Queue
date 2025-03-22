@@ -6,8 +6,11 @@ import { useAppSelector } from "../app/hook";
 import { selectLiveRoom } from "../features/liveRoom/liveRoom.slice";
 import { selectUserInfo } from "../features/auth/auth.slice";
 import { showToast } from "../utils/showToast";
+import LoadingBar from "./ui/LoadingBar";
+import { useLoadingContext } from "../contexts/loadingActionProvider";
 
 function SongQueueList({ song }: { song: SongType }) {
+  const { isLoading, startLoading } = useLoadingContext();
   const liveRoom = useAppSelector(selectLiveRoom);
   const loggedInUser = useAppSelector(selectUserInfo);
   const { isConnected, sendMessage } = useWebSocketContext();
@@ -16,6 +19,7 @@ function SongQueueList({ song }: { song: SongType }) {
   const isUpvoted = song.vote.some((x) => x === loggedInUser?._id);
 
   const handleDeleteSong = () => {
+    startLoading(`deleteSong-${song._id}`);
     const sent = sendMessage(
       { roomId: liveRoom?._id, songId: song._id },
       "DELETE_SONG"
@@ -32,6 +36,7 @@ function SongQueueList({ song }: { song: SongType }) {
   };
 
   const handleUpVoteSong = () => {
+    startLoading(`upVoteSong-${song._id}`);
     const sent = sendMessage(
       { roomId: liveRoom?._id, songId: song._id, userId: loggedInUser?._id },
       "UPVOTE_SONG"
@@ -64,7 +69,11 @@ function SongQueueList({ song }: { song: SongType }) {
               : "text-zinc-400 dark:text-text_dark"
           }`}
         >
-          <BiSolidUpvote size={17} />
+          {isLoading(`upVoteSong-${song._id}`) ? (
+            <LoadingBar size="xs" />
+          ) : (
+            <BiSolidUpvote size={17} />
+          )}
         </button>
         <span className="text-sm">{song?.noOfVote}</span>
         {/* add for active !!! text-text_dark_secondary */}
@@ -74,7 +83,11 @@ function SongQueueList({ song }: { song: SongType }) {
             onClick={handleDeleteSong}
             className="dark:text-red-500 text-red-500"
           >
-            <FaTrash size={14} />
+            {isLoading(`deleteSong-${song._id}`) ? (
+              <LoadingBar size="xs" />
+            ) : (
+              <FaTrash size={14} />
+            )}
           </button>
         )}
       </div>

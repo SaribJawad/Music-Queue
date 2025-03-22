@@ -7,6 +7,8 @@ import { selectRoomType } from "../features/liveRoom/liveRoom.slice";
 import { showToast } from "../utils/showToast";
 import { useWebSocketContext } from "../contexts/webSocketProvider";
 import { useParams } from "react-router-dom";
+import { useLoadingContext } from "../contexts/loadingActionProvider";
+import LoadingBar from "./ui/LoadingBar";
 
 const youtubeRegex =
   /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+(&.*)?$/;
@@ -21,6 +23,7 @@ const AddSongSchema = z.object({
 });
 
 function AddSongSection() {
+  const { startLoading, isLoading } = useLoadingContext();
   const { roomId } = useParams();
   const { sendMessage, isConnected } = useWebSocketContext();
   const roomType = useAppSelector(selectRoomType);
@@ -39,10 +42,10 @@ function AddSongSection() {
   });
 
   const handleAddSong = (data: { songUrl: string }) => {
+    startLoading("addSong");
     const sent = sendMessage({ ...data, roomId }, "ADD_SONG");
 
     if (sent) {
-      showToast("success", "Video/song added");
       reset();
     } else if (isConnected) {
       console.warn(
@@ -68,7 +71,7 @@ function AddSongSection() {
           />
         </div>
         <Button type="submit" size="sm" className="flex-shrink-0">
-          Add Song
+          {isLoading("addSong") ? <LoadingBar size="xs" /> : "Add Song"}
         </Button>
       </form>
       {errors.songUrl && (

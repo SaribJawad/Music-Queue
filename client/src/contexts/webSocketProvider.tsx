@@ -32,6 +32,7 @@ import {
   updateSongQueue,
 } from "../features/song/song.slice";
 import { store } from "../app/store";
+import { useLoadingContext } from "./loadingActionProvider";
 
 interface WebSocketContextType {
   sendMessage: (payload: any, action: string) => boolean;
@@ -48,6 +49,7 @@ export const WebSocketProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { stopLoading } = useLoadingContext();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const socketRef = useRef<WebSocket | null>(null);
@@ -85,6 +87,7 @@ export const WebSocketProvider = ({
         case "CREATE_ROOM":
           dispatch(setLiveRoom(parsedServerMessage.data.payload));
           dispatch(setUserIsLive(parsedServerMessage.data.payload._id));
+          stopLoading("createRoom");
           break;
 
         case "ADD_ROOM":
@@ -93,7 +96,8 @@ export const WebSocketProvider = ({
 
         case "ADD_SONG":
           const currentSong = store.getState().liveRoom.liveRoom?.currentSong;
-
+          showToast("success", "Video/song added");
+          stopLoading("addSong");
           if (currentSong) {
             dispatch(updateSongQueue(parsedServerMessage.data.payload));
           } else {
@@ -106,6 +110,7 @@ export const WebSocketProvider = ({
             replace: true,
           });
           dispatch(setUserIsJoinedLive(parsedServerMessage.data.payload));
+          stopLoading("joinRoom");
           break;
 
         case "USER_JOINED":
@@ -113,6 +118,7 @@ export const WebSocketProvider = ({
           break;
 
         case "LEAVE_ROOM":
+          stopLoading("leaveRoom");
           dispatch(setUserLeaveRoom());
           dispatch(setNoOfJoinedUsers(0));
           dispatch(setEmptySongQueue());
@@ -132,6 +138,7 @@ export const WebSocketProvider = ({
           dispatch(setUserEndRoom(parsedServerMessage.data.payload));
           dispatch(setRemoveLiveRoom());
           dispatch(setNoOfJoinedUsers(0));
+          stopLoading("endRoom");
           break;
 
         case "ROOM_ENDED":
@@ -152,6 +159,7 @@ export const WebSocketProvider = ({
 
         case "DELETE_SONG":
           dispatch(setRemoveSong(parsedServerMessage.data.payload));
+          stopLoading(`deleteSong-${parsedServerMessage.data.payload}`);
           break;
 
         case "SONG_DELETED":
@@ -160,16 +168,17 @@ export const WebSocketProvider = ({
 
         case "UPVOTE_SONG":
           dispatch(setUpvoteSong(parsedServerMessage.data.payload));
+          stopLoading(`upVoteSong-${parsedServerMessage.data.payload.songId}`);
           break;
 
         case "SYNC_ALL":
-          console.log(parsedServerMessage.data);
           dispatch(setLiveRoomTimestamps(parsedServerMessage.data.payload));
           break;
 
         case "PLAY_NEXT_SONG":
           dispatch(setRemoveSong(parsedServerMessage.data.payload._id));
           dispatch(setCurrentSong(parsedServerMessage.data.payload));
+          stopLoading("playNext");
           break;
 
         case "TIMESTAMPS":
