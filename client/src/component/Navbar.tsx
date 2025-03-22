@@ -139,7 +139,7 @@ const Navbar = ({ variant = "guest", username, isAdmin }: NavbarProps) => {
               onClickBtn={handleEndRoom}
               title="You sure you want to end Stream?"
               btnContent={
-                isLoading("endRoom") ? <LoadingBar size="xs" /> : "End rooom"
+                isLoading("endRoom") ? <LoadingBar size="xs" /> : "End room"
               }
             />
           )}
