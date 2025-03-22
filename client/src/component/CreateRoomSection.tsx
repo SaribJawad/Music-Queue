@@ -40,7 +40,7 @@ function CreateRoomSection() {
     const sent = sendMessage(createRoomData, "CREATE_ROOM");
 
     if (sent) {
-      showToast("success", "Room created!");
+      return;
     } else if (isConnected) {
       console.warn(
         "Failed to send message even though connection is established"

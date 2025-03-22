@@ -88,6 +88,8 @@ export const WebSocketProvider = ({
           dispatch(setLiveRoom(parsedServerMessage.data.payload));
           dispatch(setUserIsLive(parsedServerMessage.data.payload._id));
           stopLoading("createRoom");
+          showToast("success", "Room created!");
+
           break;
 
         case "ADD_ROOM":
