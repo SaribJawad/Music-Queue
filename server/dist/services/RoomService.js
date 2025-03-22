@@ -146,6 +146,9 @@ class RoomService {
                 return { filteredSong, roomUsers };
             }
             catch (error) {
+                if (error.code === 11000) {
+                    throw new Error("Video already in the queue/playing");
+                }
                 const errMessage = error instanceof Error ? error.message : "Failed to create room";
                 throw new Error(errMessage);
             }

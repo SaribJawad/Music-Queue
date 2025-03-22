@@ -33,7 +33,7 @@ export function handleAddSong(_a) {
         }
         catch (error) {
             console.error("Error adding song:", error);
-            wsService.sendMessage(ws, "ERROR", "An unexpected error occurred while adding song.");
+            wsService.sendMessage(ws, "ERROR", error.message);
         }
     });
 }

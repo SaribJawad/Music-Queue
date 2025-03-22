@@ -40,11 +40,7 @@ export async function handleAddSong({ clientData, ws, wsService }: IHandleArg) {
     wsService.sendMessageToEveryoneInRoom(roomUsers, "ADD_SONG", addedSong);
   } catch (error) {
     console.error("Error adding song:", error);
-    wsService.sendMessage(
-      ws,
-      "ERROR",
-      "An unexpected error occurred while adding song."
-    );
+    wsService.sendMessage(ws, "ERROR", (error as any).message);
   }
 }
 
