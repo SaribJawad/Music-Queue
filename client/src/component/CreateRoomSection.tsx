@@ -41,7 +41,6 @@ function CreateRoomSection() {
 
     if (sent) {
       showToast("success", "Room created!");
-      setIsModalOpen(false);
     } else if (isConnected) {
       console.warn(
         "Failed to send message even though connection is established"

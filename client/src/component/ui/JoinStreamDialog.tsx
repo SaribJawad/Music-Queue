@@ -41,7 +41,7 @@ function JoinStreamDialog({ setIsOpen, roomId }: CreateStreamDialogProps) {
     );
 
     if (sent) {
-      setIsOpen(false);
+      return;
     } else if (isConnected) {
       console.warn(
         "Failed to send message even though connection is established"
