@@ -137,7 +137,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   return res.redirect("https://sync-sphere-eight.vercel.app/room");
 });
 
-const handelGoogleLogout = asyncHandler(async (req, res) => {
+const handelGoogleLogout = asyncHandler(async (req, res, next) => {
   const { _id: userId } = req.user as IUser;
 
   if (!mongoose.isValidObjectId(userId)) {
@@ -150,20 +150,22 @@ const handelGoogleLogout = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while deleting the room");
   }
 
-  res.clearCookie("accessToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
+  req.logout((err) => {
+    if (err) {
+      return next(new ApiError(500, "Logout failed"));
+    }
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    res.status(200).json(new ApiResponse(200, {}, "Logged out successfully"));
   });
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "strict",
-  });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Logged out successfully"));
 });
 
 const getUserInfo = asyncHandler(async (req, res) => {
