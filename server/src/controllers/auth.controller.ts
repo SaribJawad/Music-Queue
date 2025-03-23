@@ -153,10 +153,6 @@ const handelGoogleLogout = asyncHandler(async (req, res, next) => {
       throw new ApiError(500, "Error deleting rooms");
     });
 
-    req.logout((err) => {
-      console.log(err);
-      next(err);
-    });
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: true,
