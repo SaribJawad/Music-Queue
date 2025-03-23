@@ -188,6 +188,7 @@ export const WebSocketProvider = ({
           break;
 
         case "ERROR":
+          stopLoading("addSong");
           showToast("error", parsedServerMessage.data.payload);
           break;
         default:
