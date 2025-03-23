@@ -21,7 +21,7 @@ This app is hosted on a free instance of Render.com, which may spin down due to 
 
 ```
 git clone https://github.com/SaribJawad/Sync-sphere.git
-cd streamsphere
+cd Sync sphere
 ```
 
 2. Install dependencies:
