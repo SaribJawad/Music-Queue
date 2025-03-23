@@ -138,22 +138,20 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res, next) => {
-  const { _id: userId } = req.user as IUser;
-
-  if (!mongoose.isValidObjectId(userId)) {
-    throw new ApiError(400, "Invalid user ID");
-  }
-
   try {
-    await Room.deleteMany({ owner: userId });
-  } catch (error) {
-    throw new ApiError(500, "Something went wrong while deleting the room");
-  }
+    const { _id: userId } = req.user as IUser;
 
-  req.logout((err) => {
-    if (err) {
-      return next(new ApiError(500, "Logout failed"));
+    if (!mongoose.isValidObjectId(userId)) {
+      throw new ApiError(400, "Invalid user ID");
     }
+
+    console.log("Logging out user:", userId);
+
+    await Room.deleteMany({ owner: userId }).catch((err) => {
+      console.error("Error deleting rooms:", err);
+      throw new ApiError(500, "Error deleting rooms");
+    });
+
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: true,
@@ -164,8 +162,14 @@ const handelGoogleLogout = asyncHandler(async (req, res, next) => {
       secure: true,
       sameSite: "strict",
     });
-    res.status(200).json(new ApiResponse(200, {}, "Logged out successfully"));
-  });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Logged out successfully"));
+  } catch (error) {
+    console.error("Logout Error:", error);
+    next(new ApiError(500, "Internal Server Error"));
+  }
 });
 
 const getUserInfo = asyncHandler(async (req, res) => {
