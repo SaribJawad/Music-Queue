@@ -1,6 +1,6 @@
 # Syncsphere
 
-Syncsphere is a real-time co-watching app where users can create rooms, invite others, and watch YouTube videos together in perfect sync. Users can add videos to a shared queue, upvote them, and see each other's timestamps to sync instantly.
+A real-time co-watching app where users can create rooms, invite others, and watch YouTube videos together in perfect sync. Users can add videos to a shared queue, upvote them, and see each other's timestamps to sync instantly.
 
 ## Note
 This app is hosted on a free instance of Render.com, which may spin down due to inactivity. As a result, initial load times can be delayed by 50 seconds or more.
