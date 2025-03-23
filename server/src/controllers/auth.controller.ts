@@ -150,8 +150,16 @@ const handelGoogleLogout = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while deleting the room");
   }
 
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
 
   return res
     .status(200)
