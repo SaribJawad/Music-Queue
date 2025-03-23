@@ -7,7 +7,7 @@ This app is hosted on a free instance of Render.com, which may spin down due to 
 
 ## Features
 
-- Real-time synced video playback
+- Real-time video playback with manual syncing
 - Create and join rooms
 - Add YouTube videos to a shared queue
 - Upvote videos to decide what plays next
