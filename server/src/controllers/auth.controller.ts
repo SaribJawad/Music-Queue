@@ -135,6 +135,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
       : `${PROD_FRONTEND_URL}/room`;
 
   return res.redirect("https://sync-sphere-eight.vercel.app/room");
+  //   return res.redirect(redirectUrl);
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res, next) => {
@@ -152,15 +153,19 @@ const handelGoogleLogout = asyncHandler(async (req, res, next) => {
       throw new ApiError(500, "Error deleting rooms");
     });
 
+    req.logout((err) => {
+      console.log(err);
+      next(err);
+    });
     res.clearCookie("accessToken", {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
     });
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
     });
 
     return res
