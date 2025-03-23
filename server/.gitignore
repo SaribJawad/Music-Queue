@@ -60,3 +60,6 @@ web_modules/
 
 # Microbundle cache
 .rpt2
+
+# build 
+dist/
