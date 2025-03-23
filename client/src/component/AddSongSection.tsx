@@ -71,7 +71,7 @@ function AddSongSection() {
           />
         </div>
         <Button type="submit" size="sm" className="flex-shrink-0">
-          {isLoading("addSong") ? <LoadingBar size="xs" /> : "Add Video/Song"}
+          {isLoading("addSong") ? <LoadingBar size="xs" /> : "Add"}
         </Button>
       </form>
       {errors.songUrl && (
