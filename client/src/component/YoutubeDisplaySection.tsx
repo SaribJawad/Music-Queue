@@ -224,7 +224,7 @@ function YoutubeDisplaySection({
 
         {!currentSong ? (
           <div className="h-full w-full flex items-center justify-center sm:text-base text-sm  ">
-            No current song playing right now, Add songs to play!
+            No current video/song playing right now, Add video/songs to play!
           </div>
         ) : (
           <div
