@@ -1,5 +1,4 @@
 import { Profile } from "passport-google-oauth20";
-import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongoose";
 import mongoose from "mongoose";
@@ -14,7 +13,6 @@ import {
 } from "../config/config.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Room } from "../models/room.model.js";
-import { TempCode } from "@/models/tempCode.model.js";
 
 const generateAccessAndRefreshToken = async (
   userId: ObjectId
@@ -64,6 +62,7 @@ const refreshAcccessToken = asyncHandler(async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      partitioned: true,
       sameSite: "none" as const,
     };
 
@@ -112,22 +111,12 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    partitioned: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
 
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
-
-  //   const code = uuidv4();
-
-  //   const createdTempCode = await TempCode.create({
-  //     code,
-  //     token: accessToken,
-  //     userId: user._id,
-  //     createdAt: new Date(),
-  //   });
-
-  //   console.log(createdTempCode)
 
   const redirectUrl =
     NODE_ENV === "development"
@@ -145,8 +134,6 @@ const handelGoogleLogout = asyncHandler(async (req, res, next) => {
     if (!mongoose.isValidObjectId(userId)) {
       throw new ApiError(400, "Invalid user ID");
     }
-
-    console.log("Logging out user:", userId);
 
     await Room.deleteMany({ owner: userId }).catch((err) => {
       console.error("Error deleting rooms:", err);
