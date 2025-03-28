@@ -62,7 +62,7 @@ const refreshAcccessToken = asyncHandler(async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
-      partitioned: true,
+
       sameSite: "none" as const,
     };
 
@@ -111,7 +111,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: isProduction,
     sameSite: isProduction ? ("none" as const) : ("lax" as const),
-    partitioned: true,
+
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
 
