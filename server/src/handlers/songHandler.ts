@@ -16,6 +16,8 @@ interface IHandleArg {
 
 export async function handleAddSong({ clientData, ws, wsService }: IHandleArg) {
   try {
+    console.log("add song");
+
     const parsedAddSongData = AddSongSchema.safeParse(clientData.payload);
 
     if (!parsedAddSongData.success) {
@@ -27,7 +29,7 @@ export async function handleAddSong({ clientData, ws, wsService }: IHandleArg) {
     }
 
     const { roomId, songUrl } = parsedAddSongData.data;
-
+    console.log("entering room service.addsong");
     const { filteredSong: addedSong, roomUsers } = await RoomService.addSong({
       songUrl,
       roomId,

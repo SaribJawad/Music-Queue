@@ -159,6 +159,8 @@ class RoomService {
 
       const room = await Room.findById(roomId);
 
+      console.log(room, "Room for adding song");
+
       if (!room) {
         throw new ApiError(404, "Room not found");
       }
@@ -190,6 +192,7 @@ class RoomService {
       } else {
         updateQuery = { $push: { songQueue: filteredSong } };
       }
+      console.log(updateQuery, "query for adding song");
 
       await Room.findByIdAndUpdate(roomId, updateQuery, {
         new: true,
