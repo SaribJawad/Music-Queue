@@ -169,9 +169,13 @@ class RoomService {
 
       const extractedId = extractYouTubeID(songUrl);
 
+      console.log(extractedId, "Extracted ID");
+
       const { title, channel } = await youtubesearchapi.GetVideoDetails(
         extractedId
       );
+
+      console.log(title, "Title");
 
       const validatedData = extractedSongSchema.parse({
         externalId: extractedId,
